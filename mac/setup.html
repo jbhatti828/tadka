@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Tadka</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<style>
+:root{color-scheme:light dark;--bg:#f7f3ee;--card:#fff;--ink:#2b2622;--muted:#6b625a;--line:#ddd3c8;--coral:#e2604a}
+@media (prefers-color-scheme:dark){:root{--bg:#1d1a17;--card:#2a2622;--ink:#f3ede6;--muted:#b9afa5;--line:#4a433c}}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
+.card{background:var(--card);border-radius:18px;padding:28px;width:min(460px,90vw);box-shadow:0 12px 40px rgba(0,0,0,.12);display:grid;gap:14px}
+h1{margin:0;font-size:1.4rem}p{margin:0;color:var(--muted)}label{display:grid;gap:6px;font-weight:600;font-size:.9rem}
+input{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+button{font:inherit;font-weight:700;padding:11px 16px;border-radius:10px;border:1px solid var(--coral);background:var(--coral);color:#fff;cursor:pointer;min-height:44px}
+.msg{color:#c4472f;font-size:.9rem;min-height:1em}
+</style></head><body><div class="card" id="c"></div>
+<script>
+const q=new URLSearchParams(location.search),mode=q.get("mode")||"setup",c=document.getElementById("c");
+if(mode==="offline"){c.innerHTML=`<h1>Can’t reach Tadka</h1><p>Check your internet connection, then try again.</p><p style="font-size:.85rem">${(q.get("msg")||"").replace(/[<>&]/g,"")}</p><button id="r">Try again</button>`;document.getElementById("r").onclick=()=>window.cbsShell.retry()}
+else{c.innerHTML=`<h1>${mode==="change"?"Change app link":"Welcome to Tadka"}</h1><p>Paste your app link from GitHub Pages. It looks like <b>https://yourname.github.io/tadka/</b></p><label>App link<input id="u" placeholder="https://yourname.github.io/tadka/" autocomplete="off"></label><div class="msg" id="m"></div><button id="go">Open Tadka</button>`;
+  window.cbsShell.getUrl().then(u=>{if(u)document.getElementById("u").value=u});
+  const go=async()=>{const ok=await window.cbsShell.setUrl(document.getElementById("u").value);if(!ok)document.getElementById("m").textContent="That doesn’t look right. It should start with https://"};
+  document.getElementById("go").onclick=go;document.getElementById("u").onkeydown=e=>{if(e.key==="Enter")go()}}
+</script></body></html>

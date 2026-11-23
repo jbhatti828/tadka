@@ -1,0 +1,16 @@
+{
+  "name": "tadka-mac",
+  "productName": "Tadka",
+  "version": "1.1.0",
+  "description": "Mac window for Tadka",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "install-app": "bash build-and-install.sh"
+  },
+  "devDependencies": {
+    "@electron/packager": "18.3.6",
+    "electron": "32.2.6"
+  }
+}

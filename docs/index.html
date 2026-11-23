@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Tadka</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&family=Cormorant+Garamond:wght@300;400;500;600&family=Allura&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F5F3; --surface:#FFFFFF; --ink:#1F1D1B; --muted:#6E6A66; --line:#E6E3DF;
+  --coral:#E35D47; --coral-soft:#FCEBE7; --gold:#F2C230; --danger:#B33A27;
+  --ui:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Young Serif",Georgia,"Times New Roman",serif;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161514;--surface:#211F1D;--ink:#EEEAE6;--muted:#A39E98;--line:#34312E;--coral:#F07A66;--coral-soft:#3A2420;--gold:#E8BD3A;--danger:#F08A76;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161514;--surface:#211F1D;--ink:#EEEAE6;--muted:#A39E98;--line:#34312E;--coral:#F07A66;--coral-soft:#3A2420;--gold:#E8BD3A;--danger:#F08A76;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--ui);min-height:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+img{max-width:100%}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{border-right:1px solid var(--line);background:var(--surface);padding:24px 14px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;display:flex;flex-direction:column;gap:2px;overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:1.15rem;white-space:nowrap;margin:0 8px 22px}
+.logo{width:40px;height:40px;border-radius:11px;background:var(--coral);display:grid;place-items:center;color:#fff;flex:none}
+.logo svg{width:22px;height:22px}.logo img{width:40px;height:40px;border-radius:11px;display:block}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;padding:10px 12px;border-radius:10px;text-align:left;cursor:pointer;color:var(--ink);font-weight:500}
+.nav button[aria-current="page"]{background:var(--coral-soft);color:var(--coral)}
+.nav svg{width:21px;height:21px;flex:none}
+.nav .add{display:none}
+.side h6{font-size:.8rem;color:var(--muted);font-weight:500;margin:18px 12px 4px}
+.pins button{display:block;width:100%;text-align:left;border:0;background:none;padding:7px 12px;border-radius:8px;cursor:pointer;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pins button:hover{background:var(--bg)}
+.sync{margin-top:auto;font-size:.78rem;color:var(--muted);padding:12px 12px 0}
+main{padding:28px clamp(16px,4vw,44px) 110px;max-width:1180px;width:100%}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,4vw,2.3rem);margin:0 0 4px;line-height:1.15}
+h2.sec{font-family:var(--display);font-weight:400;font-size:1.3rem;margin:30px 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+h2.sec button{border:0;background:none;color:var(--coral);font:500 .95rem var(--ui);cursor:pointer}
+.sub{color:var(--muted);margin:0 0 20px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.btn{border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:600;white-space:nowrap}
+.btn.primary{background:var(--coral);border-color:var(--coral);color:#fff}
+.btn.danger{color:var(--danger)}
+.btn.sm{padding:5px 12px;font-size:.85rem}
+.btn:disabled{opacity:.5;cursor:default}
+.search{flex:1;min-width:180px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 16px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.88rem;color:var(--ink)}
+.chip[aria-pressed="true"]{border-color:var(--coral);color:var(--coral);background:var(--coral-soft)}
+.tag{display:inline-flex;align-items:center;gap:4px;background:var(--coral-soft);color:var(--coral);border-radius:999px;padding:3px 10px;font-size:.82rem;font-weight:600;border:0;cursor:pointer}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 6px 10px;cursor:pointer;display:grid;justify-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--muted)}
+.tile span{width:38px;height:38px;border-radius:50%;background:var(--coral-soft);color:var(--coral);display:grid;place-items:center}
+.tile svg{width:20px;height:20px}
+.row-scroll{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(200px,230px);gap:14px;overflow-x:auto;padding-bottom:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;cursor:pointer;text-align:left;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.card .ph{aspect-ratio:4/3;background:var(--coral-soft);display:grid;place-items:center;color:var(--coral);font-family:var(--display);font-size:2.2rem}
+.card .ph{position:relative;overflow:hidden}
+.card .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#cropper{position:relative;display:inline-block;touch-action:none;user-select:none;overflow:hidden;border-radius:8px;cursor:crosshair;max-width:100%}
+#cropper img{display:block;max-width:100%;max-height:60vh}
+#csel{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.5);display:none;pointer-events:none}
+.card .body{padding:10px 12px 12px}
+.card h3{font-weight:600;font-size:1.02rem;margin:0 0 4px;line-height:1.3}
+.card p{margin:0;color:var(--muted);font-size:.82rem}
+.empty{border:1px dashed var(--line);border-radius:14px;padding:36px 24px;text-align:center;color:var(--muted);background:var(--surface)}
+.empty h3{font-family:var(--display);font-weight:400;color:var(--ink);margin:0 0 8px;font-size:1.3rem}
+.taglist{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.taglist button{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;font-weight:600;text-align:left}
+.taglist small{color:var(--muted);font-weight:500}
+/* detail */
+.top{display:grid;grid-template-columns:1fr 1.4fr;gap:18px}
+.hero{border-radius:16px;overflow:hidden;background:var(--coral-soft);aspect-ratio:4/3;position:relative}
+.hero img{width:100%;height:100%;object-fit:cover}
+.info{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;text-align:center}
+.info h1{font-size:clamp(1.5rem,3vw,2rem)}
+.acts{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:14px 0}
+.act{display:grid;justify-items:center;gap:4px;border:0;background:none;cursor:pointer;font-size:.82rem;color:var(--muted)}
+.act span{width:46px;height:46px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--ink)}
+.act[aria-pressed="true"] span{background:var(--coral);border-color:var(--coral);color:#fff}
+.act svg{width:20px;height:20px}
+.info p.d{text-align:left;margin:6px 0 12px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.pill{background:var(--bg);border-radius:999px;padding:5px 12px;font-size:.85rem}
+.pill.y{background:var(--gold);color:#1F1D1B;font-weight:600}
+.cols{display:grid;grid-template-columns:1fr 1.4fr;gap:18px;margin-top:18px;align-items:start}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.box h3{font-weight:700;font-size:1.15rem;margin:0 0 6px}
+.ings{list-style:none;margin:0;padding:0}
+.ings li{padding:10px 0;border-bottom:1px solid var(--line)}
+.ings li:last-child{border-bottom:0}
+.ings li.h{font-weight:700;border-bottom:0;padding-top:16px}
+.ings b{font-weight:700}
+.steps{display:grid;gap:12px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:grid;grid-template-columns:30px 1fr;gap:12px}
+.step .n{width:28px;height:28px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:700;font-size:.85rem}
+.step em{color:var(--coral);font-style:normal}
+.tipbox{background:var(--coral-soft);border-radius:16px;padding:16px 18px}
+/* forms */
+.form{display:grid;gap:16px;max-width:780px}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+label{display:grid;gap:6px;font-weight:600;font-size:.9rem}
+.hint{font-weight:400;color:var(--muted);font-size:.8rem}
+input[type=text],input[type=number],select,textarea{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;width:100%}
+textarea{min-height:130px;resize:vertical;line-height:1.5}
+.tagin{display:flex;flex-wrap:wrap;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 8px}
+.tagin input{border:0!important;padding:4px!important;flex:1;min-width:120px;width:auto!important;background:none!important}
+.tagin input:focus{outline:none}
+.sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.photo-pick{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.photo-pick img{width:96px;height:72px;object-fit:cover;border-radius:8px}
+.imp{display:grid;gap:8px}
+.imp label{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:600}
+.imp img,.imp .ph0{width:56px;height:42px;border-radius:6px;object-fit:cover;background:var(--coral-soft);flex:none}
+.imp small{display:block;color:var(--muted);font-weight:400}
+.box h3{margin:0}
+.stars{color:var(--gold);letter-spacing:1px}
+.rate{display:flex;justify-content:center;gap:2px;margin:12px 0 4px}
+.rate button{border:0;background:none;font-size:1.6rem;line-height:1;cursor:pointer;color:var(--line);padding:2px}
+.rate button[aria-pressed="true"]{color:var(--gold)}
+.made{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.vid{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#fff;background:var(--ink);padding:7px 14px;border-radius:999px;font-weight:600;font-size:.9rem;margin-top:12px}
+.card .play{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:999px;width:28px;height:28px;display:grid;place-items:center;font-size:.75rem}
+.dthumb{width:46px;height:34px;flex:none;border-radius:6px;overflow:hidden;border:1px solid var(--line);padding:0;background:var(--surface);cursor:pointer;font-size:.68rem;color:var(--muted)}
+.dthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.dpick{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px dashed var(--line);border-radius:8px;background:var(--surface)}
+.dpick button{width:60px;height:44px;padding:0;border-radius:6px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:var(--bg);font-size:.7rem}
+.dpick button[aria-pressed="true"]{border-color:var(--coral)}
+.dpick img{width:100%;height:100%;object-fit:cover;display:block}
+.pq{display:flex;gap:8px;align-items:center;padding:4px 0}
+.pq img{width:40px;height:30px;object-fit:cover;border-radius:4px}
+.pq span{flex:1;font-weight:500;font-size:.9rem}
+.scl{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.scl h3{margin:0}
+.stp{display:flex;align-items:center;gap:6px}
+.stp button{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:1.1rem;line-height:1}
+.stp span{min-width:100px;text-align:center;font-weight:600;font-size:.9rem}
+.linkb{border:0;background:none;color:var(--coral);cursor:pointer;padding:0;font:inherit;text-decoration:underline}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn svg{width:18px;height:18px;flex:none}
+.btn.sm svg{width:16px;height:16px}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wk a{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 0;background:var(--surface);font-size:.78rem;font-weight:700}
+.wk a[aria-current="date"]{border-color:var(--coral);color:var(--coral)}
+.wk .th{width:30px;height:30px;border-radius:8px;background:var(--bg);overflow:hidden;border:1px dashed var(--line)}
+.wk .th img{width:100%;height:100%;object-fit:cover}
+.tonight{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px}
+.tonight .tp{width:84px;height:84px;border-radius:12px;background:var(--coral-soft);overflow:hidden;flex:none}
+.tonight .tp img{width:100%;height:100%;object-fit:cover}
+.day{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.day.today{border-color:var(--coral)}
+.day .dn{width:46px;flex:none;text-align:center;display:flex;flex-direction:column}
+.day .dn small{color:var(--muted);font-size:.75rem;font-weight:600}
+.day .dn b{font-size:1.3rem}
+.pe{display:flex;gap:10px;align-items:center;padding:4px 0}
+.pe .pi{width:46px;height:46px;border-radius:10px;background:var(--coral-soft);overflow:hidden;flex:none}
+.pe .pi img{width:100%;height:100%;object-fit:cover}
+.pe a{flex:1;color:var(--ink);text-decoration:none;font-weight:600;line-height:1.25}
+.pe small{display:block;color:var(--muted);font-weight:400;font-size:.8rem}
+.pick{border:1px dashed var(--line);border-radius:12px;padding:10px;display:grid;gap:8px;margin-top:6px}
+.pick ul{list-style:none;margin:0;padding:0;max-height:260px;overflow:auto}
+.pick li button{width:100%;text-align:left;border:0;background:none;padding:8px 6px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--ink)}
+.pick li button:hover{background:var(--bg)}
+.pick li small{color:var(--muted);font-weight:400}
+.gsec h3{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
+.gl{list-style:none;margin:0;padding:0}
+.gl li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.gl .ck{width:26px;height:26px;flex:none;border:2px solid var(--muted);border-radius:7px;background:var(--surface);cursor:pointer;display:grid;place-items:center;color:#fff;padding:0}
+.gl .ck[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+.gl .ck svg{width:16px;height:16px}
+.gl .gt{flex:1}
+.gl .gt small{display:block;color:var(--muted);font-size:.78rem}
+.gl li.done .gt span{text-decoration:line-through;color:var(--muted)}
+.gl.big li{padding:16px 0}
+.gl.big .gt span{font-size:1.15rem;font-weight:600}
+.gl.big .ck{width:34px;height:34px}
+.pantry{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px}
+.pantry .chips{margin:0}
+.chip.have{text-decoration:line-through;color:var(--muted);background:var(--bg)}
+.prog{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ink)}
+.onebox{background:var(--surface);border:2px dashed var(--line);border-radius:16px;padding:16px;display:grid;gap:10px}
+.onebox.drag{border-color:var(--coral);background:var(--coral-soft)}
+.onebox textarea{min-height:170px;border:0;padding:0;background:none}
+.onebox textarea:focus{outline:none}
+.addgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.addgrid .tile{cursor:pointer}
+.bigacts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 4px}
+.bigacts .btn{min-height:44px}
+.cook{max-width:760px;margin:0 auto;display:grid;gap:20px}
+.cook .cstep{font-size:clamp(1.4rem,4.2vw,2rem);line-height:1.4;font-weight:600;margin:0}
+.cook .ctimer{font-variant-numeric:tabular-nums;font-weight:800;font-size:1.4rem}
+.cook .nav2{display:flex;gap:10px}
+.cook .nav2 .btn{flex:1;min-height:54px;font-size:1rem}
+/* builder */
+.builder{display:grid;grid-template-columns:370px 1fr;gap:24px;align-items:start}
+.panel{display:grid;gap:10px;position:sticky;top:calc(16px + env(safe-area-inset-top,0px));max-height:calc(100vh - 32px);overflow:auto;padding-right:4px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 16px}
+summary{cursor:pointer;font-weight:700;padding:12px 0;list-style-position:inside}
+details>div{display:grid;gap:14px;padding:4px 0 16px}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opt{border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:9px 8px;cursor:pointer;font-size:.85rem;text-align:left}
+.opt[aria-pressed="true"]{border-color:var(--coral);box-shadow:0 0 0 1px var(--coral) inset;background:var(--coral-soft)}
+.sw{display:flex;gap:8px}
+.sw button{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);cursor:pointer}
+.sw button[aria-pressed="true"]{border-color:var(--coral);box-shadow:0 0 0 2px var(--surface) inset}
+.chap{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.chap span{flex:1;font-weight:600}
+.chap button{border:0;background:none;cursor:pointer;padding:2px 6px;color:var(--muted)}
+.picks{max-height:240px;overflow:auto;display:grid;gap:2px;border:1px solid var(--line);border-radius:10px;padding:6px}
+.picks label,.toggle{display:flex;gap:8px;align-items:center;font-weight:500}
+.picks label{padding:4px 6px;border-radius:6px}
+.picks small{color:var(--muted);margin-left:auto;font-weight:400}
+.preview-wrap{background:var(--line);border-radius:14px;padding:20px;overflow-x:auto}
+.pnote{font-size:.85rem;color:var(--muted);margin:0 0 12px}
+#preview{display:flex;flex-direction:column;align-items:center;gap:18px}
+#preview .pg{box-shadow:0 2px 12px rgba(0,0,0,.18)}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.toast.show{opacity:1}
+#printRoot{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;top:auto;bottom:calc(10px + env(safe-area-inset-bottom,0px));left:10px;right:10px;height:auto;padding:6px;border:1px solid var(--line);border-radius:22px;z-index:20;box-shadow:0 4px 20px rgba(0,0,0,.12);overflow:visible}
+  .brand,.sync,.side h6,.pins{display:none}
+  .nav{flex-direction:row;justify-content:space-around;align-items:center}
+  .nav button{flex-direction:column;gap:2px;font-size:.7rem;padding:6px 8px;width:auto;color:var(--muted)}
+  .nav .add{display:flex}
+  .nav .add svg{width:46px;height:46px;padding:12px;border-radius:50%;background:var(--coral);color:#fff}
+  .nav .add .lbl{display:none}
+  .nav .hide-m{display:none}
+  .top,.cols,.builder{grid-template-columns:1fr}
+  .acts{gap:6px}
+  .act{font-size:.74rem;min-width:54px}
+  .act span{width:42px;height:42px}
+  .panel{position:static;max-height:none}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  main{padding-top:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style id="bookcss">
+.bk{--tone:#EDE8E2;--ink:#4A4643;--soft:#9A928A;--line:#D9D2CA}
+.bk.p-sage{--tone:#E2E7DF;--ink:#3E4A41;--soft:#87938A;--line:#C9D2C7}
+.bk.p-blush{--tone:#F3E5E0;--ink:#57433F;--soft:#A88F89;--line:#E5CFC8}
+.bk.p-charcoal{--tone:#E5E4E2;--ink:#2D2D2D;--soft:#7D7C79;--line:#CFCECB}
+.bk .pg{width:var(--pw);min-height:var(--ph);background:#fff;color:var(--ink);font:400 8.5pt/1.65 "Montserrat",Helvetica,Arial,sans-serif;position:relative;break-after:page;page-break-after:always;display:flex;flex-direction:column;overflow:hidden}
+.bk .pg:last-child{break-after:auto;page-break-after:auto}
+.bk .fx{height:var(--ph)}
+.bk img{display:block;object-fit:cover;width:100%;max-width:none}
+.bk .ph0{background:var(--tone)}
+.bk .t{font-family:"Cormorant Garamond",Garamond,Georgia,serif;font-weight:400;text-transform:uppercase;letter-spacing:.16em;line-height:1.1;margin:0}
+.bk .sc{font-family:"Allura","Brush Script MT",cursive;font-size:20pt;line-height:1.1}
+.bk .lab{font-size:6.5pt;letter-spacing:.24em;text-transform:uppercase;color:var(--soft)}
+.bk .num{font-family:"Cormorant Garamond",serif;font-weight:300;line-height:.8;color:var(--ink);opacity:.13}
+.bk .desc{color:var(--soft);font-size:8pt;margin:.08in auto 0;max-width:4.2in}
+.bk .icons{display:flex;gap:.32in;justify-content:center;margin:.14in 0}
+.bk .ic{text-align:center;font-size:6pt;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+.bk .ic svg{width:13px;height:13px;display:block;margin:0 auto 3px;color:var(--ink)}
+.bk .ic b{display:block;font-weight:500;color:var(--ink);letter-spacing:.04em;font-size:7pt}
+.bk h4{font-family:"Cormorant Garamond",serif;font-weight:600;text-transform:uppercase;letter-spacing:.22em;font-size:9pt;margin:.16in 0 .08in}
+.bk ul.ing{list-style:none;margin:0;padding:0}
+.bk ul.ing li{display:flex;gap:7px;margin:0 0 3px;break-inside:avoid}
+.bk ul.ing li::before{content:"";flex:none;width:7px;height:7px;border:1px solid var(--ink);margin-top:4px}
+.bk ul.ing li.ih{font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:6.8pt;margin-top:6px}
+.bk ul.ing li.ih::before{display:none}
+.bk ol.ins{margin:0;padding-left:1.3em}
+.bk ol.ins li{margin:0 0 5px;break-inside:avoid}
+.bk .two{columns:2;column-gap:.28in}
+.bk .tip{background:var(--tone);padding:.14in .2in;margin-top:.16in;text-align:center}
+.bk .tip h4{margin-top:0}
+.bk .see{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:.02in 0 .1in;margin-top:.16in;text-align:center}
+.bk .see h4{margin:.06in 0}
+.bk .pgref{color:var(--soft);font-style:italic}
+.bk .folio{position:absolute;bottom:.28in;left:0;right:0;text-align:center;font-size:6.5pt;letter-spacing:.2em;color:var(--soft)}
+.bk .src{font-size:6.5pt;color:var(--soft);margin-top:.12in;letter-spacing:.06em}
+/* covers */
+.bk .cva{padding:.4in;outline:1px solid var(--line);outline-offset:-.2in}
+.bk .cva .cvt{text-align:center;padding:.3in 0 .22in}
+.bk .cva h1{font-size:30pt}
+.bk .cva .cvi{flex:1;min-height:0;height:auto}
+.bk .cva .cvf{text-align:center;padding-top:.18in}
+.bk .cvb .hd{background:var(--tone);text-align:center;padding:.55in .4in .3in}
+.bk .cvb h1{font-size:30pt}
+.bk .cvb .cvi{flex:1;min-height:0;height:auto}
+.bk .cvb .ft{background:var(--tone);text-align:center;padding:.3in .4in .45in}
+.bk .cvc{border-left:.3in solid var(--tone);border-right:.3in solid var(--tone);padding:.5in .35in .45in;text-align:center}
+.bk .cvc h1{font-size:28pt;margin:.04in 0 .25in}
+.bk .cvc .cvi{flex:1;min-height:0;height:auto}
+.bk .cvc .lab{margin-top:.25in}
+.bk .cvd{display:grid;grid-template-columns:1in 1fr;grid-template-rows:1fr auto}
+.bk .cvd .sp{grid-row:1/3;background:var(--tone);display:flex;align-items:flex-end;justify-content:center;padding:.4in 0}
+.bk .cvd .sp h1{writing-mode:vertical-rl;transform:rotate(180deg);font-size:34pt}
+.bk .cvd .cvi{height:100%;min-height:0}
+.bk .cvd .ft{text-align:center;padding:.3in .3in .45in}
+/* dividers */
+.bk .dv{justify-content:center;align-items:center;text-align:center}
+.bk .dv .ov{position:relative;z-index:1}
+.bk .dv .num{font-size:150pt;position:absolute;left:50%;top:50%;transform:translate(-62%,-55%);z-index:0}
+.bk .dv h2{font-size:24pt;position:relative;letter-spacing:.2em}
+.bk .dv1{flex-direction:row;justify-content:flex-start}
+.bk .dv1 .cvi{width:55%;height:100%;flex:none}
+.bk .dv1 .ovw{position:absolute;inset:0;display:grid;place-items:center}
+.bk .dv1 h2{background:linear-gradient(90deg,transparent,rgba(255,255,255,.75) 20%,rgba(255,255,255,.75) 80%,transparent);padding:.1in .3in}
+.bk .dv2 .bgi{position:absolute;inset:0;height:100%;opacity:.32}
+.bk .dv3{display:grid;grid-template-rows:1fr auto 1fr;gap:.12in;padding:.35in}
+.bk .dv3 .cl{display:grid;grid-template-columns:1fr 1fr;gap:.12in;min-height:0}
+.bk .dv3 .cl>*{height:100%;min-height:0}
+.bk .dv3 h2{padding:.12in 0}
+/* recipe layouts */
+.bk .rc{padding:.55in .55in .6in}
+.bk .rc .hd{text-align:center}
+.bk .rc h2{font-size:19pt}
+.bk .ra{display:grid;grid-template-columns:32% 1fr;padding:0}
+.bk .ra .si{height:100%;min-height:var(--ph)}
+.bk .ra .ct{padding:.55in .5in .6in}
+.bk .ra .hd{text-align:left;background:var(--tone);margin:-.55in -.5in .1in;padding:.5in .5in .25in}
+.bk .ra .desc{margin-left:0}
+.bk .ra .icons{justify-content:flex-start}
+.bk .rb{padding:0}
+.bk .rb .ti{height:calc(var(--ph)*.36);flex:none}
+.bk .rb .ct{padding:.35in .6in .6in}
+.bk .rc .band{background:var(--tone);margin:.1in -.55in;padding:.12in .55in .2in}
+.bk .rc .bot{margin:auto -.55in -.6in;height:2.1in;width:calc(100% + 1.1in);flex:none}
+.bk .rd{padding:0}
+.bk .rd .tp{display:grid;grid-template-columns:1fr 40%}
+.bk .rd .tp .ri{height:4.1in}
+.bk .rd .tp .ct{padding:.55in .35in .2in .55in}
+.bk .rd .tp .hd{text-align:left}
+.bk .rd .tp .icons{justify-content:flex-start}
+.bk .rd .tp .desc{margin-left:0}
+.bk .rd .bt{padding:0 .55in .6in}
+/* other pages */
+.bk .wl .wi{height:45%;flex:none}
+.bk .wl .ct{padding:.4in .7in;text-align:center}
+.bk .wl h2{font-size:22pt;margin:.06in 0}
+.bk .wl p{margin:.1in 0;text-align:left}
+.bk .toc{padding:.7in .8in}
+.bk .toc>h2{font-size:24pt;text-align:center;margin-bottom:.35in}
+.bk .tch{display:flex;align-items:baseline;gap:.12in;margin:.2in 0 .06in}
+.bk .tch .num{font-size:26pt;opacity:.3}
+.bk .tch h3{font-size:11pt}
+.bk .tr{display:flex;gap:6px;align-items:baseline;margin:3px 0 3px .45in}
+.bk .toc>.tr:first-of-type,.bk .toc>h2+.tr{margin-top:0}
+.bk .toc>h2~.tr{margin-left:0}
+.bk .toc>.tch~.tr{margin-left:.45in}
+.bk .tr i{flex:1;border-bottom:1px dotted var(--soft);transform:translateY(-3px)}
+.bk .qt{justify-content:center;padding:.8in}
+.bk .qt .bgi{position:absolute;inset:0;height:100%;opacity:.3}
+.bk .qt p{position:relative;font-family:"Cormorant Garamond",serif;text-transform:uppercase;letter-spacing:.3em;font-size:15pt;line-height:2.2;margin:0}
+.bk .qt .lab{position:absolute;right:.7in;bottom:.7in}
+.bk .pl{padding:.6in}
+.bk .pl h2,.bk .cd h2,.bk .ty h2{font-size:22pt;text-align:center}
+.bk .plg{display:grid;grid-template-columns:1.3fr 1fr;gap:.25in;flex:1;margin-top:.25in}
+.bk .day{background:var(--tone);padding:.06in .1in;height:.95in;margin-bottom:.06in}
+.bk .ln{border-bottom:1px solid var(--line);height:.27in;display:flex;align-items:flex-end;gap:6px}
+.bk .ln.bx::before{content:"";width:7px;height:7px;border:1px solid var(--ink);margin-bottom:4px}
+.bk .cd{padding:.6in}
+.bk .cdg{display:grid;grid-template-columns:1fr 1.4fr;gap:.3in;margin-top:.2in}
+.bk .nb{border:1px solid var(--line);height:1.1in;padding:.08in;margin-top:.2in}
+.bk .ty{justify-content:center;text-align:center;padding:.7in}
+.bk .ty .sc{font-size:22pt;margin:.15in 0 .3in}
+.bk .ty .cl{display:grid;grid-template-columns:repeat(3,1fr);gap:.1in;height:2.2in}
+.bk .ty .cl>*{height:100%}
+</style>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-512.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tadka">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><span class="logo"><img src="icon-512.png" alt=""></span>Tadka</div>
+    <nav class="nav" aria-label="Main">
+      <button data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/></svg><span class="lbl">Home</span></button>
+      <button data-view="recipes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg><span class="lbl">Recipes</span></button>
+      <button data-view="paste" class="add" aria-label="Add recipes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Add</span></button>
+      <button data-view="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span class="lbl">Plan</span></button>
+      <button data-view="groceries"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4h2l2 12h11l2-8H6"/><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg><span class="lbl">Groceries</span></button>
+      <button data-view="book"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h6a3 3 0 0 1 2 1 3 3 0 0 1 2-1h6v14h-6a2 2 0 0 0-2 1 2 2 0 0 0-2-1H4z"/><path d="M12 6v14"/></svg><span class="lbl">Book</span></button>
+      <button data-view="paste" class="hide-m" id="navPaste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Add recipes</span></button>
+    </nav>
+    <h6>Pinned</h6><div class="pins" id="pins"></div>
+    <div class="sync" id="sync">Saving on this device</div>
+  </aside>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="printRoot"></div>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="bridge.js"></script>
+<script>
+(() => {
+const LS_KEY="cookbook-studio-v1";
+const PALETTES={linen:["Linen","#EDE8E2"],sage:["Sage","#E2E7DF"],blush:["Blush","#F3E5E0"],charcoal:["Charcoal","#D9D8D5"]};
+const COVERS={a:"Framed title",b:"Soft bands",c:"Side panels",d:"Spine title"};
+const LAYOUTS={mix:"Mix all layouts",a:"Side photo",b:"Photo on top",c:"Text first",d:"Photo right"};
+const SIZES={letter:["Letter 8.5 × 11 in",8.5,11],b8x10:["8 × 10 in",8,10],t6x9:["6 × 9 in",6,9]};
+const DEF_BOOK={divPhotos:{},title:"Cookbook",subtitle:"simple & homemade",author:"",palette:"linen",cover:"a",layout:"mix",size:"letter",coverPhoto:"",
+  chapters:[],untagged:true,selected:[],toc:true,dividers:true,
+  welcome:false,welcomeTitle:"Welcome",welcomeText:"",quote:false,quoteText:"",quoteBy:"",planner:false,card:false,thanks:true,thanksText:"Thank you for cooking with me.",withLinked:true};
+const state={plan:{days:{}},groc:{items:[],pantry:[]},wk:0,gview:"aisle",recipes:[],book:{...DEF_BOOK},imgs:{cover:"",welcome:""},view:"home",current:null,draft:null,filter:"",q:"",fav:false};
+const store={mode:"local",col:null,downloads:null,sample:null,imagesOk:false,unsynced:new Set(),lastErr:null};
+const $=s=>document.querySelector(s);
+const main=$("#main");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rawLines=s=>String(s||"").split(/\n/).map(x=>x.trim()).filter(Boolean);
+const clean=x=>x.replace(/^\s*(?:[-*•]|\d+[.)])\s*/,"").trim();
+const isHead=x=>/^#/.test(x)||/:$/.test(x);
+const headText=x=>x.replace(/^#+\s*/,"").replace(/:$/,"");
+const uid=()=>"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const pad=n=>String(n).padStart(2,"0");
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2400)}
+function normTag(t){return String(t||"").replace(/\s+/g," ").trim()}
+function normalize(r){
+  const o={...r};
+  if(!Array.isArray(o.tags)) o.tags=o.category&&o.category!=="Other"?[o.category]:[];
+  if(o.description==null) o.description=o.story||"";
+  delete o.category; delete o.story;
+  ["servings","prep","cook","ingredients","steps","tip","source","photo","video"].forEach(k=>{if(o[k]==null)o[k]=""});
+  o.rating=+o.rating||0; o.cooked=+o.cooked||0; if(o.calories==null)o.calories=""; o.calories=String(o.calories); o.caloriesEst=!!o.caloriesEst; if(o.servingSize==null)o.servingSize="";
+  o.fav=!!o.fav; o.pinned=!!o.pinned; if(!Array.isArray(o.links))o.links=[]; return o;
+}
+function allTags(){const m=new Map();state.recipes.forEach(r=>r.tags.forEach(t=>{const k=t.toLowerCase();if(!m.has(k))m.set(k,{name:t,count:0});m.get(k).count++}));return [...m.values()].sort((a,b)=>a.name.localeCompare(b.name))}
+const hasTag=(r,t)=>r.tags.some(x=>x.toLowerCase()===t.toLowerCase());
+
+/* storage */
+function loadLocal(){try{const d=JSON.parse(localStorage.getItem(LS_KEY)||"null");if(d){state.recipes=(d.recipes||[]).map(normalize);store.unsynced=new Set(d.unsynced||[]);Object.assign(state.book,d.book||{});Object.assign(state.imgs,d.imgs||{});if(d.plan)state.plan={days:d.plan.days||{}};if(d.groc)state.groc={items:d.groc.items||[],pantry:d.groc.pantry||[]}}}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify({recipes:state.recipes,book:state.book,imgs:state.imgs,plan:state.plan,groc:state.groc,unsynced:[...store.unsynced]}))}catch(e){try{localStorage.setItem(LS_KEY,JSON.stringify({recipes:state.recipes,book:state.book,unsynced:[...store.unsynced]}))}catch(e2){}}}
+async function initCloud(){
+  if(!window.claude||!window.claude.use) return;
+  try{
+    const [db,user,dl,sample]=await Promise.all(["db","user","downloads","sample"].map(n=>claude.use(n)));
+    store.downloads=dl; store.sample=sample;
+    if(sample){ $("#navPaste").hidden=false; try{const l=await sample.limits(); store.imagesOk=!!l?.images;store.maxImgs=l?.images?.maxCount||4}catch(e){} if(state.view==="home")render(); }
+    if(!db||!user) return;
+    const id=await user.id(); if(!id) return;
+    store.col=db.collection("data/users/"+id); store.mode="cloud";
+    $("#sync").textContent="Synced to your account";
+    let first=true;
+    store.col.onSnapshot(snap=>{
+      if(first&&snap.empty&&state.recipes.length){first=false;migrate();return}
+      first=false;
+      const recs=[];
+      snap.docs.forEach(d=>{const v=d.data();if(!v)return;
+        if(d.id==="book"){const {kind,...rest}=v;Object.assign(state.book,rest)}
+        else if(d.id==="plan")state.plan={days:v.days||{}}
+        else if(d.id==="grocery")state.groc={items:v.items||[],pantry:v.pantry||[]}
+        else if(v.kind==="bookimg") state.imgs[d.id.replace("img_","")]=v.data||"";
+        else if(v.kind==="recipe") recs.push(normalize({...v,id:d.id}))});
+      const have=new Set(recs.map(r=>r.id));state.recipes.forEach(r=>{if(store.unsynced.has(r.id)&&!have.has(r.id))recs.push(r)});
+      state.recipes=recs.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+      if(store.unsynced.size&&!store.retrying){store.retrying=true;setTimeout(async()=>{for(const id of [...store.unsynced]){const r=state.recipes.find(x=>x.id===id);if(r)await putRecipe(r,true,true);else store.unsynced.delete(id)}store.retrying=false;updSync()},800)}
+      updSync();
+      saveLocal(); drawPins();
+      if(!["edit","paste","book","groceries","cook","plan"].includes(state.view)) render();
+      else if(state.view==="book") drawPreview();
+    },()=>{$("#sync").textContent="Sync paused. Saving on this device"});
+  }catch(e){}
+}
+async function migrate(){for(const r of state.recipes) await putRecipe(r,true,true); await putBook(); for(const k in state.imgs) if(state.imgs[k]) await putImg(k)}
+async function putRecipe(r,silent,keepTime){
+  if(!keepTime) r.updatedAt=Date.now();
+  const i=state.recipes.findIndex(x=>x.id===r.id); if(i>=0) state.recipes[i]=r; else state.recipes.unshift(r);
+  saveLocal(); drawPins();
+  if(store.mode==="cloud"){const {id,...body}=r;try{await store.col.doc(id).set({...body,kind:"recipe"});store.unsynced.delete(id);saveLocal();updSync();return true}catch(e){store.unsynced.add(id);store.lastErr=e;saveLocal();updSync();if(!silent)toast(errMsg(e));return false}}
+  return true;
+}
+function errMsg(e){return e?.code==="quota_exceeded"?"Your storage is full. Remove a few photos and try again.":/large|size|limit/i.test((e?.code||"")+(e?.message||""))?"A recipe is too large to sync. Try a smaller photo.":"Syncing to your account failed."}
+function updSync(){if(store.mode!=="cloud")return;const n=store.unsynced.size;$("#sync").textContent=n?`${n} recipe${n>1?"s":""} not synced yet`:"Synced to your account"}
+async function removeRecipe(id){
+  state.recipes=state.recipes.filter(r=>r.id!==id); state.recipes.forEach(x=>{if(x.links.some(l=>l.id===id)){x.links=x.links.filter(l=>l.id!==id);putRecipe(x,true,true)}}); state.book.selected=state.book.selected.filter(x=>x!==id); saveLocal(); drawPins();
+  if(store.mode==="cloud"){try{await store.col.doc(id).delete()}catch(e){} putBook()}
+}
+let pt,gt;
+function putPlan(){saveLocal();clearTimeout(pt);pt=setTimeout(()=>{if(store.mode==="cloud")store.col.doc("plan").set({kind:"plan",days:state.plan.days}).catch(()=>toast("Plan saved on this device only."))},500)}
+function putGroc(){saveLocal();clearTimeout(gt);gt=setTimeout(()=>{if(store.mode==="cloud")store.col.doc("grocery").set({kind:"grocery",items:state.groc.items,pantry:state.groc.pantry}).catch(()=>toast("List saved on this device only."))},500)}
+let bt;
+function putBook(){saveLocal();clearTimeout(bt);return new Promise(res=>{bt=setTimeout(async()=>{if(store.mode==="cloud"){try{await store.col.doc("book").set({...state.book,kind:"book"})}catch(e){}}res()},600)})}
+async function putImg(k){saveLocal();if(store.mode==="cloud"){try{await store.col.doc("img_"+k).set({kind:"bookimg",data:state.imgs[k]})}catch(e){toast("Photo saved on this device only.")}}}
+function shrinkSrc(src,max=1000,limit=190000){
+  return new Promise((res,rej)=>{const img=new Image();
+    img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);let q=.8,o=c.toDataURL("image/jpeg",q);limit=Math.min(limit,170000);while(o.length>limit&&q>.35){q-=.1;o=c.toDataURL("image/jpeg",q)}res(o)};
+    img.onerror=()=>rej();img.src=src});
+}
+function cropSrc(src,b){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const x0=Math.min(b[0],b[2]),y0=Math.min(b[1],b[3]),x1=Math.max(b[0],b[2]),y1=Math.max(b[1],b[3]),W=img.naturalWidth,H=img.naturalHeight;const c=document.createElement("canvas");c.width=Math.max(1,Math.round((x1-x0)*W));c.height=Math.max(1,Math.round((y1-y0)*H));c.getContext("2d").drawImage(img,x0*W,y0*H,c.width,c.height,0,0,c.width,c.height);shrinkSrc(c.toDataURL("image/png")).then(res,rej)};img.onerror=()=>rej();img.src=src})}
+async function shrinkImage(file,max,limit){const url=URL.createObjectURL(file);try{return await shrinkSrc(url,max,limit)}finally{URL.revokeObjectURL(url)}}
+
+/* nav */
+function setView(v,cur=null){
+  state.view=v;state.current=cur;
+  if(v==="edit"&&!cur&&!state.draft) state.draft=null;
+  document.querySelectorAll(".nav button").forEach(b=>{const on=b.dataset.view===v&&!(v==="edit"&&cur);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});
+  render();window.scrollTo(0,0);
+}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>{state.draft=null;state.linkTo=null;state.found=null;setView(b.dataset.view)}));
+function drawPins(){const p=$("#pins");const ps=state.recipes.filter(r=>r.pinned);p.innerHTML=ps.length?ps.map(r=>`<button data-id="${r.id}">${esc(r.title)}</button>`).join(""):`<p class="hint" style="margin:4px 12px">Pin recipes to keep them here.</p>`;p.querySelectorAll("button").forEach(b=>b.onclick=()=>open(b.dataset.id))}
+function open(id){const r=state.recipes.find(x=>x.id===id);if(r){r.viewedAt=Date.now();saveLocal()}setView("detail",id)}
+function render(){if(state.view!=="cook"&&wakeL){wakeL.release().catch(()=>{});wakeL=null}({home:renderHome,recipes:renderList,tags:renderTags,detail:renderDetail,edit:renderEdit,paste:renderPaste,book:renderBook,plan:renderPlan,groceries:renderGroc,cook:renderCook}[state.view]||renderHome)()}
+
+const I={cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',cart:'<path d="M3 4h2l2 12h11l2-8H6"/><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',file:'<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',pot:'<path d="M4 10h16v4a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6zM2 10h20M9 4c0 2 2 2 2 4M14 4c0 2 2 2 2 4"/>',share:'<path d="M12 3v12M7 8l5-5 5 5M5 14v6h14v-6"/>',check:'<path d="M5 12l5 5 9-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  add:'<path d="M12 5v14M5 12h14"/>',heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  pin:'<path d="M9 4h6l-1 6 3 3H7l3-3zM12 13v7"/>',tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>',
+  paste:'<rect x="7" y="4" width="10" height="4" rx="1"/><path d="M7 6H5v15h14V6h-2"/>',book:'<path d="M4 5h6a3 3 0 0 1 2 1 3 3 0 0 1 2-1h6v14h-6a2 2 0 0 0-2 1 2 2 0 0 0-2-1H4z"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',print:'<path d="M7 9V4h10v5M7 17H5V9h14v8h-2M7 14h10v6H7z"/>',bookadd:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M12 8v6M9 11h6"/>'};
+const ico=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${I[k]}</svg>`;
+const cardHTML=(r,note)=>`<button class="card" data-id="${r.id}"><div class="ph">${r.photo?`<img src="${r.photo}" alt="">`:esc(Array.from((r.title||"?").replace(/^[^\p{L}\p{N}]+/u,"")||"?")[0])}${r.video?`<span class="play" aria-label="Has video">▶</span>`:""}</div><div class="body"><h3>${esc(r.title||"Untitled")}</h3><p>${r.rating?`<span class="stars">${starStr(r.rating)}</span> `:""}${note?esc(note):r.tags.length?esc(r.tags.slice(0,3).join(", ")):"No tags"}</p></div></button>`;
+const PW=new Map();
+function photoW(src){if(!src)return Promise.resolve(0);if(PW.has(src))return Promise.resolve(PW.get(src));return new Promise(r=>{const i=new Image();i.onload=()=>{PW.set(src,i.naturalWidth);r(i.naturalWidth)};i.onerror=()=>r(0);i.src=src})}
+const UF={"½":.5,"¼":.25,"¾":.75,"⅓":1/3,"⅔":2/3,"⅛":.125};
+function pnum(s){s=s.trim().replace(/(\d)-(?=\d+\/)/,"$1 ");let t=0;for(const q of s.split(/\s+/)){if(UF[q]!=null)t+=UF[q];else if(q.includes("/")){const[a,b]=q.split("/");t+=a/b}else t+=parseFloat(q)||0}return t}
+function fmtQ(x){if(x>=10&&Math.abs(x-Math.round(x))<.13)return String(Math.round(x));const w=Math.floor(x+1e-9),r=x-w;const F=[[0,""],[.125,"1/8"],[.25,"1/4"],[1/3,"1/3"],[.375,"3/8"],[.5,"1/2"],[.625,"5/8"],[2/3,"2/3"],[.75,"3/4"],[.875,"7/8"],[1,""]];let b=F[0];for(const f of F)if(Math.abs(f[0]-r)<Math.abs(b[0]-r))b=f;const W=b[0]===1?w+1:w;return W?(b[1]?W+" "+b[1]:String(W)):(b[1]||"0")}
+function fmtG(g){return g<3?String(Math.round(g*10)/10):g<100?String(Math.round(g)):String(Math.round(g/5)*5)}
+const QN="(?:\\d+\\s+\\d+\\/\\d+|\\d+-\\d+\\/\\d+|\\d+\\/\\d+|\\d+(?:\\.\\d+)?(?:\\s[½¼¾⅓⅔⅛])?|[½¼¾⅓⅔⅛])";
+function scaleLine(l,k){if(k===1)return l;
+  let s=l.replace(/(\d)([½¼¾⅓⅔⅛])/g,"$1 $2");
+  const pkg=new RegExp("^\\s*"+QN+"\\s*\\(").test(s);
+  s=s.replace(new RegExp("^(\\s*)("+QN+")(?:(\\s*(?:-|–|to)\\s*)("+QN+"))?(?:(\\s+and\\s+)("+QN+"))?"),(m,sp,a,mid,b,and,c)=>c?sp+fmtQ((pnum(a)+pnum(c))*k):sp+fmtQ(pnum(a)*k)+(b?mid+fmtQ(pnum(b)*k):""));
+  let first=true;
+  s=s.replace(/\(([^)]*?)(\d+(?:\.\d+)?)(\s*(?:–|-)\s*(\d+(?:\.\d+)?))?\s*(kg|g)\b([^)]*)\)/g,(m,pre,a,rng,b,u,post)=>{const skip=(pkg&&first)||/each/.test(post);first=false;if(skip)return m;return `(${pre}${fmtG(+a*k)}${b?"–"+fmtG(+b*k):""} ${u}${post})`});
+  return s}
+const NUTRI_PROMPT=(r)=>`Check this recipe's yield and nutrition. From the ingredients and steps, work out the realistic number of servings, using any yield stated in the steps (for example "cut into 8 wedges", "makes 12 biscuits", "16 balls", a loaf pan or a 9x13 pan) over the number written on the recipe if they disagree. Give a short serving size people can picture, like "1 biscuit", "1 slice (1/8 of the pie)", "1 cup" or "1 sandwich". Then estimate calories per serving with standard nutrition values, counting only what is eaten (not frying oil left in the pan, discarded marinade or brine). Return only JSON: {"servings":"8","servingSize":"1 scone","calories":440,"note":"one short sentence if the written servings looked wrong, otherwise empty"}.\n\nTITLE: ${r.title}\nWRITTEN SERVINGS: ${r.servings||"not given"}\nINGREDIENTS:\n${r.ingredients}\nSTEPS:\n${String(r.steps).slice(0,4000)}`;
+async function nutriCheck(r){const j=await store.sample.json(NUTRI_PROMPT(r));return {servings:String(j?.servings||"").trim(),servingSize:String(j?.servingSize||"").trim(),calories:Math.round(+j?.calories)||0,note:String(j?.note||"").trim()}}
+const starStr=n=>n?"★".repeat(n)+"☆".repeat(5-n):"";
+const bindCards=()=>main.querySelectorAll(".card").forEach(b=>b.onclick=()=>open(b.dataset.id));
+
+function renderHome(){
+  const now=new Date(),tk=dayKey(now),ws=weekStart(0);
+  const byId=id=>state.recipes.find(r=>r.id===id);
+  const tonight=(state.plan.days[tk]||[]).map(e=>byId(e.id)).filter(Boolean);
+  const first=String(state.book.author||"").trim().split(/\s+/)[0];
+  const seed=Number(tk.replace(/-/g,""));const hash=s=>{let h=seed;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+  const notMade=state.recipes.filter(r=>!r.cooked).sort((a,b)=>hash(a.id)-hash(b.id)).slice(0,12);
+  const recent=[...state.recipes].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,10);
+  const pinned=state.recipes.filter(r=>r.pinned),favs=state.recipes.filter(r=>r.fav);
+  const t=tonight[0];
+  main.innerHTML=`<p class="sub" style="margin:0">${now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})}</p><h1>${first?"Hi, "+esc(first):"Tadka"}</h1>
+  <div class="bar" style="margin-top:14px"><input class="search" type="text" placeholder="Search ${state.recipes.length} recipes or ingredients" aria-label="Search"></div>
+  ${t?`<div class="tonight"><div class="tp">${t.photo?`<img src="${t.photo}" alt="">`:""}</div><div style="flex:1;display:grid;gap:4px"><span class="hint" style="font-weight:700;letter-spacing:.05em;text-transform:uppercase">Tonight</span><b style="font-size:1.1rem">${esc(t.title)}</b><span class="hint">${[t.cook,t.servings?"Serves "+t.servings:"",t.calories?(t.caloriesEst?"≈":"")+t.calories+" cal":""].filter(Boolean).map(esc).join(" · ")}</span></div></div>
+   <div class="bar" style="margin-top:10px"><button class="btn primary" id="h-cook">Start cooking</button><button class="btn" id="h-open">Open recipe</button></div>`
+   :`<div class="tonight"><div style="flex:1;display:grid;gap:4px"><b>Nothing planned tonight</b><span class="hint">Pick something from your recipes, or let the planner suggest a week.</span></div><button class="btn primary" id="h-plan">Plan</button></div>`}
+  <h2 class="sec">This week <button data-go="plan">Open plan</button></h2>
+  <div class="wk">${[...Array(7)].map((_,i)=>{const d=new Date(ws);d.setDate(d.getDate()+i);const k=dayKey(d);const r=(state.plan.days[k]||[]).map(e=>byId(e.id)).filter(Boolean)[0];return `<a href="#" data-day="${k}" ${k===tk?'aria-current="date"':""}>${d.toLocaleDateString(undefined,{weekday:"short"})}<span class="th">${r&&r.photo?`<img src="${r.photo}" alt="${esc(r.title)}">`:""}</span></a>`}).join("")}</div>
+  <div class="tiles" style="margin-top:20px">
+    <button class="tile" data-go="paste"><span>${ico("add")}</span>Add recipes</button>
+    <button class="tile" data-go="plan"><span>${ico("cal")}</span>Plan week</button>
+    <button class="tile" data-go="groceries"><span>${ico("cart")}</span>Groceries</button>
+    <button class="tile" data-go="fav"><span>${ico("heart")}</span>Favorites</button>
+    <button class="tile" data-go="book"><span>${ico("book")}</span>Cookbook</button>
+  </div>
+  ${notMade.length?`<h2 class="sec">Haven’t made yet <button data-nm="1">See all ${state.recipes.filter(r=>!r.cooked).length}</button></h2><div class="row-scroll">${notMade.map(r=>cardHTML(r)).join("")}</div>`:""}
+  ${pinned.length?`<h2 class="sec">Pinned</h2><div class="row-scroll">${pinned.map(r=>cardHTML(r)).join("")}</div>`:""}
+  ${recent.length?`<h2 class="sec">Recently added <button data-all="1">Show all</button></h2><div class="row-scroll">${recent.map(r=>cardHTML(r)).join("")}</div>`:`<div class="empty" style="margin-top:24px"><h3>Start your collection</h3><p>Add recipes from Instagram, websites, PDFs or Cook Manager.</p></div>`}
+  ${favs.length?`<h2 class="sec">Favorites <button data-fav="1">Show all</button></h2><div class="row-scroll">${favs.map(r=>cardHTML(r)).join("")}</div>`:""}`;
+  main.querySelector(".search").addEventListener("keydown",e=>{if(e.key==="Enter"){state.q=e.target.value;state.filter="";state.fav=false;state.made="";setView("recipes")}});
+  main.querySelectorAll("[data-go]").forEach(t=>t.onclick=()=>{const g=t.dataset.go;state.draft=null;if(g==="fav"){state.fav=true;state.filter="";state.q="";state.made="";setView("recipes")}else setView(g)});
+  main.querySelectorAll("[data-day]").forEach(a=>a.onclick=e=>{e.preventDefault();state.wk=0;setView("plan")});
+  const hc=$("#h-cook");if(hc){hc.onclick=()=>{state.cs=0;setView("cook",t.id)};$("#h-open").onclick=()=>open(t.id)}
+  const hp=$("#h-plan");if(hp)hp.onclick=()=>setView("plan");
+  const nm=main.querySelector("[data-nm]");if(nm)nm.onclick=()=>{state.made="no";state.fav=false;state.filter="";state.q="";setView("recipes")};
+  const a=main.querySelector("[data-all]");if(a)a.onclick=()=>{state.fav=false;state.filter="";state.made="";setView("recipes")};
+  const f=main.querySelector("[data-fav]");if(f)f.onclick=()=>{state.fav=true;state.filter="";setView("recipes")};
+  bindCards();
+}
+/* ===== dates ===== */
+function dayKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function weekStart(off){const d=new Date();d.setHours(0,0,0,0);const w=(d.getDay()+6)%7;d.setDate(d.getDate()-w+off*7);return d}
+function i18nDay(d){const t=dayKey(new Date());const k=dayKey(d);if(k===t)return "Today";const tm=new Date();tm.setDate(tm.getDate()+1);if(k===dayKey(tm))return "Tomorrow";return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})}
+/* ===== PLANNER ===== */
+function planRecs(off){const ws=weekStart(off),out=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(d.getDate()+i);(state.plan.days[dayKey(d)]||[]).forEach(e=>{const r=state.recipes.find(x=>x.id===e.id);if(r){const b=parseFloat(String(r.servings).match(/\d+(\.\d+)?/)?.[0]||0);out.push({r,k:e.s&&b?e.s/b:1})}})}return out}
+function renderPlan(){
+  const ws=weekStart(state.wk),we=new Date(ws);we.setDate(we.getDate()+6);const tk=dayKey(new Date());
+  const fmt=d=>d.toLocaleDateString(undefined,{month:"short",day:"numeric"});const n=planRecs(state.wk).length;
+  main.innerHTML=`<div class="bar" style="justify-content:space-between"><h1 style="margin:0">Plan</h1><div class="bar" style="margin:0;gap:4px"><button class="btn sm" id="pl-prev" aria-label="Previous week">‹</button><b style="min-width:130px;text-align:center">${fmt(ws)} – ${fmt(we)}</b><button class="btn sm" id="pl-next" aria-label="Next week">›</button></div></div>
+  <div class="bar"><button class="btn" id="pl-suggest">Suggest meals for empty days</button>${state.wk!==0?`<button class="btn" id="pl-today">This week</button>`:""}</div>
+  <div style="display:grid;gap:10px">${[...Array(7)].map((_,i)=>{const d=new Date(ws);d.setDate(d.getDate()+i);const k=dayKey(d);const es=state.plan.days[k]||[];
+    return `<div class="day ${k===tk?"today":""}"><div class="dn"><small>${d.toLocaleDateString(undefined,{weekday:"short"})}</small><b>${d.getDate()}</b></div><div style="flex:1;min-width:0">${es.map((e,j)=>{const r=state.recipes.find(x=>x.id===e.id);if(!r)return "";return `<div class="pe"><div class="pi">${r.photo?`<img src="${r.photo}" alt="">`:""}</div><a href="#" data-open="${r.id}">${esc(r.title)}<small>${[e.s?"Serves "+e.s:r.servings?"Serves "+r.servings:"",r.calories?(r.caloriesEst?"≈":"")+r.calories+" cal":"",r.cook].filter(Boolean).map(esc).join(" · ")}</small></a><button class="btn sm" data-cookp="${r.id}" aria-label="Cook ${esc(r.title)}">Cook</button><button class="btn sm" data-rm="${k}|${j}" aria-label="Remove ${esc(r.title)}">${ico("x")}</button></div>`}).join("")}
+    <button class="linkb" data-add="${k}" style="padding:8px 0;min-height:36px">+ Add a recipe</button>${state.pickDay===k?pickerHTML():""}</div></div>`}).join("")}</div>
+  <div class="bar" style="margin-top:16px"><button class="btn primary" id="pl-groc" ${n?"":"disabled"}>${ico("cart")} Make grocery list from ${n} recipe${n===1?"":"s"}</button></div>`;
+  $("#pl-prev").onclick=()=>{state.wk--;state.pickDay=null;renderPlan()};$("#pl-next").onclick=()=>{state.wk++;state.pickDay=null;renderPlan()};
+  const td=$("#pl-today");if(td)td.onclick=()=>{state.wk=0;renderPlan()};
+  main.querySelectorAll("[data-open]").forEach(a=>a.onclick=e=>{e.preventDefault();open(a.dataset.open)});
+  main.querySelectorAll("[data-cookp]").forEach(b=>b.onclick=()=>{state.cs=0;setView("cook",b.dataset.cookp)});
+  main.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{const [k,j]=b.dataset.rm.split("|");state.plan.days[k].splice(+j,1);if(!state.plan.days[k].length)delete state.plan.days[k];putPlan();renderPlan()});
+  main.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>{state.pickDay=state.pickDay===b.dataset.add?null:b.dataset.add;state.pickQ="";renderPlan();const q=$("#pk-q");if(q)q.focus()});
+  bindPicker();
+  $("#pl-suggest").onclick=()=>{const used=new Set(Object.values(state.plan.days).flat().map(e=>e.id));
+    const mains=state.recipes.filter(r=>!used.has(r.id)&&r.steps&&r.tags.some(t=>/main/i.test(t)));const pool=(mains.length>=7?mains:state.recipes.filter(r=>!used.has(r.id)&&r.steps));
+    const nm=pool.filter(r=>!r.cooked),pref=[...nm.sort(()=>Math.random()-.5),...pool.filter(r=>r.cooked).sort(()=>Math.random()-.5)];let c=0;
+    for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(d.getDate()+i);const k=dayKey(d);if(dayKey(d)<tk&&state.wk===0)continue;if(!(state.plan.days[k]||[]).length&&pref.length){state.plan.days[k]=[{id:pref.shift().id,s:0}];c++}}
+    putPlan();renderPlan();toast(c?`Added ${c} meal${c>1?"s":""}, mostly ones you haven’t made yet`:"Every day already has a meal")};
+  $("#pl-groc").onclick=()=>{rebuildGroc(planRecs(state.wk));setView("groceries");toast("Grocery list made from your plan")};
+}
+function pickerHTML(){const q=(state.pickQ||"").toLowerCase();const rs=state.recipes.filter(r=>!q||(r.title+" "+r.tags.join(" ")+" "+r.ingredients).toLowerCase().includes(q)).sort((a,b)=>(!!a.cooked-!!b.cooked)||a.title.localeCompare(b.title)).slice(0,40);
+  return `<div class="pick"><label class="hint" for="pk-q">Search your recipes</label><input type="text" id="pk-q" value="${esc(state.pickQ||"")}" placeholder="Chicken, soup, Thanksgiving…"><ul>${rs.map(r=>`<li><button data-pk="${r.id}">${esc(r.title)} <small>${[r.cooked?"made "+r.cooked+"×":"not made yet",r.cook].filter(Boolean).map(esc).join(" · ")}</small></button></li>`).join("")||`<li class="hint">No matches.</li>`}</ul></div>`}
+function bindPicker(){const q=$("#pk-q");if(!q)return;q.oninput=()=>{state.pickQ=q.value;const p=q.selectionStart;renderPlan();const n=$("#pk-q");n.focus();n.setSelectionRange(p,p)};
+  main.querySelectorAll("[data-pk]").forEach(b=>b.onclick=()=>{const k=state.pickDay;(state.plan.days[k]=state.plan.days[k]||[]).push({id:b.dataset.pk,s:0});state.pickDay=null;putPlan();renderPlan()})}
+/* ===== GROCERIES ===== */
+const UNITRE=/^(cups?|c\.|tablespoons?|tbsps?|teaspoons?|tsps?|ounces?|oz|pounds?|lbs?|grams?|g|kg|cloves?|cans?|sticks?|pinch(?:es)?|bunch(?:es)?|slices?|packages?|pkg|heads?|stalks?|sprigs?|handfuls?)\b\.?/i;
+const UNITN={cup:"cup",cups:"cups",c:"cup",tablespoon:"tbsp",tablespoons:"tbsp",tbsp:"tbsp",tbsps:"tbsp",teaspoon:"tsp",teaspoons:"tsp",tsp:"tsp",tsps:"tsp",ounce:"oz",ounces:"oz",oz:"oz",pound:"lb",pounds:"lb",lb:"lb",lbs:"lb",gram:"g",grams:"g",g:"g",kg:"kg",clove:"clove",cloves:"clove",can:"can",cans:"can",stick:"stick",sticks:"stick",pinch:"pinch",pinches:"pinch",bunch:"bunch",bunches:"bunch",slice:"slice",slices:"slice",package:"package",packages:"package",pkg:"package",head:"head",heads:"head",stalk:"stalk",stalks:"stalk",sprig:"sprig",sprigs:"sprig",handful:"handful",handfuls:"handful"};
+const DESC=/\b(fresh(ly)?|chopped|minced|diced|sliced|finely|roughly|thinly|large|small|medium|ripe|whole|grated|shredded|softened|melted|cold|warm|hot|room temperature|packed|divided|optional|to taste|as required|extra[- ]virgin|unsalted|salted|boneless|skinless|peeled|crushed|cut into.*|for (garnish|serving|frying|brushing).*|plus more.*|or more.*|about|approximately)\b/g;
+function parseIng(line){let s=clean(line).replace(/(\d)([½¼¾⅓⅔⅛])/g,"$1 $2");let qty=null;
+  const m=s.match(new RegExp("^("+QN+")(?:\\s*(?:-|–|to)\\s*("+QN+"))?\\s*"));if(m){qty=pnum(m[2]||m[1]);s=s.slice(m[0].length)}
+  let g=0;const gm=s.match(/\(([^)]*?)(\d+(?:\.\d+)?)\s*(kg|g)\b([^)]*)\)/);if(gm){g=+gm[2]*(gm[3]==="kg"?1000:1);if(/each/.test(gm[4]))g*=qty||1}
+  s=s.replace(/\([^)]*\)/g," ").replace(/\s+/g," ").trim();
+  let unit="";const um=s.match(UNITRE);if(um){unit=UNITN[um[1].toLowerCase()]||um[1].toLowerCase();s=s.slice(um[0].length).trim()}
+  s=s.replace(/^of\s+/i,"");const name=s.split(/,|;|\s-\s/)[0].trim();
+  const key=name.toLowerCase().replace(DESC," ").replace(/[^a-z ]/g," ").replace(/\s+/g," ").trim().replace(/(oes|ies|es|s)$/,m=>m==="ies"?"y":m==="oes"?"o":m==="es"&&/(ch|sh|x|ss)es$/.test(name.toLowerCase())?"":m==="es"?"e":"");
+  return {qty,unit,name,key,g}}
+const AIS=[["Meat & Seafood",/chicken(?! (stock|broth|bouillon))|beef(?! (stock|broth))|pork|lamb|bacon|turkey|sausage|shrimp|prawn|fish(?! sauce)|salmon|tuna|mince|steak|\bham\b|chorizo|drumstick|thigh|short rib/],["Spices",/powder|flakes?|dried|seeds?|ground (cumin|coriander|cinnamon|black pepper|white pepper|nutmeg|ginger|cardamom|cloves?|turmeric|mustard)|peppercorn|\bsalt\b|masala|cumin|paprika|turmeric|cinnamon|oregano|cardamom|saffron|nutmeg|bay lea|sumac|asafoetida|hing|fenugreek|cayenne|chaat|black pepper|white pepper|msg|extract|baking soda|baking powder|yeast/],["Dairy & Eggs",/milk(?! powder)|butter(?!milk)|buttermilk|cream|cheese|yog(h)?urt|\begg|paneer|ricotta|mozzarella|parmesan|cheddar|feta|ghee|half and half|tzatziki/],["Produce",/onion|garlic|tomato|pepper|chil+i|chile|jalape|serrano|habanero|cilantro|coriander|parsley|basil|mint|dill|lemon|lime|orange|banana|apple|berr|mango|peach|nectarine|pear|grape|potato|carrot|celery|ginger|spinach|lettuce|cabbage|cucumber|mushroom|broccoli|cauliflower|zucchini|squash|eggplant|avocado|scallion|shallot|leek|kale|radish|beet|amla|rosemary|thyme|date|bean sprout|green bean|french bean/],["Bakery",/bread|\bbuns?\b|rolls?\b|tortilla|pastry|pita|naan|croissant|bagel|pie crust|pie shell/],["Frozen",/frozen|ice cream/],["Pantry",/./]];
+const AORDER=["Produce","Meat & Seafood","Dairy & Eggs","Bakery","Pantry","Spices","Frozen","My items"];
+const aisleOf=n=>(AIS.find(([,re])=>re.test(n.toLowerCase()))||["Pantry"])[0];
+function groceryItems(recs){const map=new Map();
+  recs.forEach(({r,k})=>rawLines(r.ingredients).forEach(l=>{if(isHead(l))return;const p=parseIng(l);if(!p.key||/^(water|ice|cooking spray)$/.test(p.key))return;
+    let e=map.get(p.key);if(!e){e={k:p.key,name:p.name,parts:{},some:false,g:0,gAll:true,recipes:new Set(),aisle:aisleOf(p.name)};map.set(p.key,e)}
+    if(p.qty!=null)e.parts[p.unit]=(e.parts[p.unit]||0)+p.qty*k;else e.some=true;if(p.g)e.g+=p.g*k;else e.gAll=false;e.recipes.add(r.title)}));
+  return [...map.values()].map(e=>{const parts=Object.entries(e.parts).map(([u,q])=>`${fmtQ(q)}${u?" "+u:""}`);return {id:uid(),k:e.k,text:(parts.length?parts.join(" + ")+" ":"")+e.name+(e.g&&e.gAll&&parts.length?` (${fmtG(e.g)} g)`:""),aisle:e.aisle,recipes:[...e.recipes],checked:false}})}
+function rebuildGroc(recs){const old=state.groc.items;const items=groceryItems(recs);items.forEach(it=>{const o=old.find(x=>x.k===it.k&&!x.custom);if(o&&o.checked)it.checked=true});state.groc.items=[...items,...old.filter(x=>x.custom)];putGroc()}
+function addToGroc(recs){const add=groceryItems(recs);add.forEach(it=>{const o=state.groc.items.find(x=>x.k===it.k&&!x.custom);if(o){o.text+=" + "+it.text.replace(/\s+\(\d.*g\)$/,"");o.recipes=[...new Set([...o.recipes,...it.recipes])];o.checked=false}else state.groc.items.push(it)});putGroc()}
+const STAPLE=/^(salt|black pepper|pepper|salt and pepper|salt pepper|olive oil|vegetable oil|oil|sesame oil|sugar|brown sugar|light brown sugar|flour|all purpose flour|vinegar|apple cider vinegar|white vinegar|soy sauce|baking soda|baking powder|vanilla extract|vanilla|cooking spray|butter|garlic|honey|ketchup|mustard|dijon mustard|mayonnaise|rice|cornstarch|corn starch|worcestershire sauce|hot sauce|chicken broth|chicken stock|beef broth|vegetable broth)$/;
+function renderGroc(){
+  const G=state.groc,pan=new Set(G.pantry);const items=G.items;const have=it=>!it.custom&&pan.has(it.k);
+  const need=items.filter(it=>!have(it)),left=need.filter(it=>!it.checked).length;
+  if(state.store)return renderStore(need);
+  const staples=[...new Map(items.filter(it=>!it.custom&&(it.aisle==="Spices"||((it.aisle==="Pantry"||it.aisle==="Produce"||it.aisle==="Dairy & Eggs")&&STAPLE.test(it.k)))).map(it=>[it.k,it])).values()].slice(0,30);
+  const row=it=>`<li class="${it.checked?"done":""}"><button class="ck" data-ck="${it.id}" aria-pressed="${it.checked}" aria-label="${it.checked?"Uncheck":"Check off"} ${esc(it.text)}">${it.checked?ico("check"):""}</button><div class="gt"><span>${esc(it.text)}</span>${it.recipes&&it.recipes.length?`<small>${esc(it.recipes.join(", "))}</small>`:""}</div>${it.custom?`<button class="btn sm" data-del="${it.id}" aria-label="Delete ${esc(it.text)}">${ico("x")}</button>`:""}</li>`;
+  let body="";
+  if(state.gview==="recipe"){const by=new Map();need.forEach(it=>(it.custom?["My items"]:it.recipes).forEach(t=>{if(!by.has(t))by.set(t,[]);by.get(t).push(it)}));body=[...by].map(([t,xs])=>`<div class="gsec"><h3>${esc(t)}</h3><ul class="gl">${xs.map(row).join("")}</ul></div>`).join("")}
+  else{body=AORDER.map(a=>{const xs=need.filter(it=>(it.custom?"My items":it.aisle)===a).sort((x,y)=>x.checked-y.checked);return xs.length?`<div class="gsec"><h3>${a} · ${xs.filter(x=>!x.checked).length}</h3><ul class="gl">${xs.map(row).join("")}</ul></div>`:""}).join("")}
+  const owned=items.filter(have);
+  main.innerHTML=`<div class="bar" style="justify-content:space-between"><h1 style="margin:0">Groceries</h1><div class="bar" style="margin:0"><button class="btn" id="g-share">${ico("share")} Share</button><button class="btn primary" id="g-store" ${need.length?"":"disabled"}>In-store mode</button></div></div>
+  ${items.length?`<p class="sub" style="margin:4px 0 14px">${left} of ${need.length} left to buy${owned.length?` · ${owned.length} already at home`:""}</p>`:""}
+  ${staples.length?`<details class="pantry" ${state.panOpen===false?"":"open"} id="g-pan"><summary style="font-weight:700;cursor:pointer">Before you shop: tap what you already have</summary><div class="chips">${staples.map(it=>`<button class="chip ${pan.has(it.k)?"have":""}" data-pan="${esc(it.k)}" aria-pressed="${pan.has(it.k)}" title="${esc(it.name||it.k)}">${esc((it.name||it.k).length>28?(it.name||it.k).slice(0,26)+"…":(it.name||it.k))}</button>`).join("")}</div><span class="hint">Remembered for next time, so staples you keep stocked stop showing up.</span></details>`:""}
+  <div class="bar" style="margin-top:14px"><input class="search" id="g-add" type="text" placeholder="Add an item, like paper towels" aria-label="Add an item"><button class="btn" id="g-addb">Add</button></div>
+  ${items.length?`<div class="chips"><button class="chip" aria-pressed="${state.gview!=="recipe"}" data-gv="aisle">By aisle</button><button class="chip" aria-pressed="${state.gview==="recipe"}" data-gv="recipe">By recipe</button></div>${body}
+   ${owned.length?`<details style="margin-top:16px"><summary class="hint" style="cursor:pointer">Already at home (${owned.length})</summary><ul class="gl">${owned.map(it=>`<li><div class="gt"><span>${esc(it.text)}</span></div><button class="btn sm" data-need="${esc(it.k)}">Need it</button></li>`).join("")}</ul></details>`:""}
+   <div class="bar" style="margin-top:18px"><button class="btn" id="g-clear">Remove checked items</button><button class="btn" id="g-plan">Rebuild from this week’s plan</button><button class="btn danger" id="g-empty">Clear list</button></div>`
+  :`<div class="empty"><h3>Your list is empty</h3><p>Plan some meals and make a list from them, or tap “Add to groceries” on any recipe.</p><button class="btn primary" id="g-goplan">Open the planner</button></div>`}`;
+  const save=()=>{putGroc();renderGroc()};
+  main.querySelectorAll("[data-ck]").forEach(b=>b.onclick=()=>{const it=items.find(x=>x.id===b.dataset.ck);it.checked=!it.checked;save()});
+  main.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{G.items=items.filter(x=>x.id!==b.dataset.del);save()});
+  main.querySelectorAll("[data-pan]").forEach(b=>b.onclick=()=>{const k=b.dataset.pan;G.pantry=pan.has(k)?G.pantry.filter(x=>x!==k):[...G.pantry,k];save()});
+  main.querySelectorAll("[data-need]").forEach(b=>b.onclick=()=>{G.pantry=G.pantry.filter(x=>x!==b.dataset.need);save()});
+  main.querySelectorAll("[data-gv]").forEach(b=>b.onclick=()=>{state.gview=b.dataset.gv;renderGroc()});
+  const pd=$("#g-pan");if(pd)pd.ontoggle=()=>{state.panOpen=pd.open};
+  const add=()=>{const v=$("#g-add").value.trim();if(!v)return;G.items.push({id:uid(),k:"custom:"+v.toLowerCase(),text:v,aisle:"My items",recipes:[],checked:false,custom:true});save();const n=$("#g-add");if(n)n.focus()};
+  $("#g-addb").onclick=add;$("#g-add").onkeydown=e=>{if(e.key==="Enter")add()};
+  $("#g-store").onclick=()=>{state.store=true;state.storeA=null;renderGroc()};
+  $("#g-share").onclick=async()=>{const txt=AORDER.map(a=>{const xs=need.filter(it=>!it.checked&&(it.custom?"My items":it.aisle)===a);return xs.length?a+"\n"+xs.map(x=>"• "+x.text).join("\n"):""}).filter(Boolean).join("\n\n");
+    try{if(navigator.share){await navigator.share({title:"Grocery list",text:txt});return}}catch(e){if(e.name==="AbortError")return}
+    try{await navigator.clipboard.writeText(txt);toast("List copied. Paste it into Messages or Notes.")}catch(e){toast("Couldn’t copy the list on this device.")}};
+  const gc=$("#g-clear");if(gc){gc.onclick=()=>{G.items=items.filter(x=>!x.checked);save()};$("#g-plan").onclick=()=>{const rs=planRecs(0);if(!rs.length)return toast("Nothing planned this week yet.");rebuildGroc(rs);renderGroc();toast("Rebuilt from this week’s plan")};$("#g-empty").onclick=()=>{if(confirm("Clear the whole grocery list?")){G.items=[];save()}}}
+  const gp=$("#g-goplan");if(gp)gp.onclick=()=>setView("plan");
+}
+function renderStore(need){
+  const as=AORDER.filter(a=>need.some(it=>(it.custom?"My items":it.aisle)===a));if(!as.length){state.store=false;return renderGroc()}
+  if(!as.includes(state.storeA))state.storeA=as.find(a=>need.some(it=>(it.custom?"My items":it.aisle)===a&&!it.checked))||as[0];
+  const cur=need.filter(it=>(it.custom?"My items":it.aisle)===state.storeA).sort((x,y)=>x.checked-y.checked);const done=need.filter(x=>x.checked).length;
+  const nextA=as[(as.indexOf(state.storeA)+1)%as.length];
+  main.innerHTML=`<div class="bar" style="justify-content:space-between"><h1 style="margin:0">At the store</h1><button class="btn" id="s-done">Done</button></div>
+  <p class="sub" style="margin:4px 0 6px">${done} of ${need.length} in the cart</p><div class="prog"><i style="width:${need.length?Math.round(done/need.length*100):0}%"></i></div>
+  <div class="chips" style="margin-top:14px">${as.map(a=>{const n=need.filter(it=>(it.custom?"My items":it.aisle)===a&&!it.checked).length;return `<button class="chip" data-sa="${a}" aria-pressed="${a===state.storeA}">${a} ${n}</button>`}).join("")}</div>
+  <ul class="gl big">${cur.map(it=>`<li class="${it.checked?"done":""}"><button class="ck" data-ck="${it.id}" aria-pressed="${it.checked}" aria-label="${it.checked?"Uncheck":"Check off"} ${esc(it.text)}">${it.checked?ico("check"):""}</button><div class="gt"><span>${esc(it.text)}</span></div></li>`).join("")}</ul>
+  ${as.length>1?`<div class="bar" style="margin-top:18px"><button class="btn primary" id="s-next" style="flex:1;min-height:52px">Next aisle: ${esc(nextA)}</button></div>`:""}`;
+  main.querySelectorAll("[data-ck]").forEach(b=>b.onclick=()=>{const it=state.groc.items.find(x=>x.id===b.dataset.ck);it.checked=!it.checked;putGroc();renderGroc()});
+  main.querySelectorAll("[data-sa]").forEach(b=>b.onclick=()=>{state.storeA=b.dataset.sa;renderGroc()});
+  $("#s-done").onclick=()=>{state.store=false;renderGroc()};const sn=$("#s-next");if(sn)sn.onclick=()=>{state.storeA=nextA;renderGroc();window.scrollTo(0,0)};
+}
+/* ===== COOK MODE ===== */
+let wakeL=null,ctimer=null;
+function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)();[0,.35,.7].forEach(t=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=880;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.25,a.currentTime+t);o.start(a.currentTime+t);o.stop(a.currentTime+t+.2)})}catch(e){}try{navigator.vibrate&&navigator.vibrate([300,150,300])}catch(e){}}
+function tickTimer(){const el=$("#c-tleft");if(!ctimer){if(el)el.textContent="";return}const left=Math.max(0,Math.round((ctimer.end-Date.now())/1000));if(el)el.textContent=`${ctimer.label}: ${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;if(left<=0){const l=ctimer.label;clearInterval(ctimer.iv);ctimer=null;beep();toast(`${l} timer is done`);if(el)el.textContent=""}}
+function renderCook(){
+  const r=state.recipes.find(x=>x.id===state.current);if(!r)return setView("home");
+  const steps=rawLines(r.steps).filter(x=>!isHead(x)).map(clean);if(!steps.length){toast("This recipe has no steps yet.");return setView("detail",r.id)}
+  const i=Math.max(0,Math.min(state.cs||0,steps.length-1)),st=steps[i];
+  const tm=st.match(/(\d+(?:\.\d+)?)(?:\s*(?:-|–|to)\s*(\d+(?:\.\d+)?))?\s*(minutes?|mins?|hours?|hrs?|seconds?|secs?)\b/i);let secs=0;if(tm){const n=+(tm[1]);secs=Math.round(/^h/i.test(tm[3])?n*3600:/^s/i.test(tm[3])?n:n*60)}
+  const words=w=>(String(w).toLowerCase().match(/[a-z]{4,}/g)||[]);const sw=new Set(words(st).map(w=>w.replace(/(es|s)$/,"")));
+  const used=rawLines(r.ingredients).filter(l=>!isHead(l)).filter(l=>words(parseIng(l).name).some(w=>sw.has(w.replace(/(es|s)$/,"")))).slice(0,6);
+  if(!wakeL&&navigator.wakeLock)navigator.wakeLock.request("screen").then(w=>{wakeL=w}).catch(()=>{});
+  main.innerHTML=`<div class="cook"><div class="bar" style="justify-content:space-between;margin:0"><button class="btn" id="c-exit">${ico("x")} Exit</button><span class="ctimer" id="c-tleft" aria-live="polite"></span></div>
+  <div><p class="hint" style="margin:0 0 6px;font-weight:700">${esc(r.title)} · Step ${i+1} of ${steps.length}</p><div class="prog"><i style="width:${Math.round((i+1)/steps.length*100)}%"></i></div></div>
+  <p class="cstep">${hiTimes(st)}</p>
+  ${secs?`<div><button class="btn" id="c-timer">${ico("pot")} Start ${tm[1]} ${tm[3].replace(/s$/,"")}${+tm[1]===1?"":"s"} timer</button></div>`:""}
+  ${used.length?`<div class="box"><h3 style="font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Used in this step</h3><ul class="ings">${used.map(l=>`<li>${esc(clean(l))}</li>`).join("")}</ul></div>`:""}
+  <div class="nav2"><button class="btn" id="c-prev" ${i===0?"disabled":""}>Previous</button>${i<steps.length-1?`<button class="btn primary" id="c-next">Next step</button>`:`<button class="btn primary" id="c-fin">Finish · I made this</button>`}</div>
+  <p class="hint" style="text-align:center;margin:0">${navigator.wakeLock?"Your screen stays on while cooking.":""}</p></div>`;
+  tickTimer();
+  $("#c-exit").onclick=()=>{if(wakeL){wakeL.release().catch(()=>{});wakeL=null}setView("detail",r.id)};
+  const p=$("#c-prev");if(p)p.onclick=()=>{state.cs=i-1;renderCook()};const n=$("#c-next");if(n)n.onclick=()=>{state.cs=i+1;renderCook();window.scrollTo(0,0)};
+  const f=$("#c-fin");if(f)f.onclick=async()=>{r.cooked=(r.cooked||0)+1;r.lastCooked=Date.now();await putRecipe(r,false,true);if(wakeL){wakeL.release().catch(()=>{});wakeL=null}toast("Logged as made. Enjoy!");setView("detail",r.id)};
+  const t=$("#c-timer");if(t)t.onclick=()=>{if(ctimer)clearInterval(ctimer.iv);ctimer={end:Date.now()+secs*1000,label:`Step ${i+1}`};ctimer.iv=setInterval(tickTimer,1000);tickTimer()};
+}
+function renderList(){
+  const q=state.q.toLowerCase();
+  const items=state.recipes.filter(r=>(!state.fav||r.fav)&&(!state.made||(state.made==="no"?!r.cooked:r.cooked>0))&&(!state.nophoto||!r.photo)&&(!state.filter||hasTag(r,state.filter))&&(!q||(r.title+" "+r.ingredients+" "+r.tags.join(" ")).toLowerCase().includes(q)));
+  const so=state.sort||"new";items.sort(so==="az"?(a,b)=>a.title.localeCompare(b.title):so==="rate"?(a,b)=>b.rating-a.rating||a.title.localeCompare(b.title):so==="made"?(a,b)=>b.cooked-a.cooked||a.title.localeCompare(b.title):(a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+  const tags=allTags();
+  main.innerHTML=`<h1>${state.fav?"Favorites":state.filter?esc(state.filter):"My recipes"}</h1><p class="sub">${items.length} of ${state.recipes.length}</p>
+  <div class="bar"><input class="search" type="text" placeholder="Search by name, ingredient or tag" value="${esc(state.q)}" aria-label="Search"><select id="sort" aria-label="Sort" style="width:auto"><option value="new">Newest</option><option value="az">A to Z</option><option value="rate">Top rated</option><option value="made">Most made</option></select><button class="btn primary" id="add">Add recipe</button><button class="btn" id="totags">Tags</button></div>
+  ${state.recipes.length?`<div class="chips"><button class="chip" aria-pressed="${!state.filter&&!state.fav}" data-c="">All</button><button class="chip" aria-pressed="${state.fav}" data-f="1">Favorites</button><button class="chip" aria-pressed="${state.made==="no"}" data-m="no">Not made yet</button><button class="chip" aria-pressed="${state.made==="yes"}" data-m="yes">Made before</button><button class="chip" aria-pressed="${!!state.nophoto}" data-np="1">No photo</button>${tags.map(t=>`<button class="chip" aria-pressed="${state.filter.toLowerCase()===t.name.toLowerCase()}" data-c="${esc(t.name)}">${esc(t.name)}</button>`).join("")}</div>`:""}
+  ${!state.recipes.length?`<div class="empty"><h3>No recipes yet</h3><p>Your saved recipes will show up here.</p></div>`:!items.length?`<div class="empty"><p>No recipes match.</p></div>`:`<div class="grid">${items.map(cardHTML).join("")}</div>`}`;
+  const s=main.querySelector(".search");
+  s.addEventListener("input",e=>{state.q=e.target.value;const p=e.target.selectionStart;renderList();const n=main.querySelector(".search");n.focus();n.setSelectionRange(p,p)});
+  $("#add").onclick=()=>{state.draft=null;setView("edit")};
+  $("#totags").onclick=()=>setView("tags");
+  $("#sort").value=state.sort||"new";$("#sort").onchange=e=>{state.sort=e.target.value;renderList()};
+  main.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(b.dataset.np){state.nophoto=!state.nophoto}else if(b.dataset.m){state.made=state.made===b.dataset.m?"":b.dataset.m}else if(b.dataset.f){state.fav=!state.fav;state.filter=""}else{state.filter=b.dataset.c;state.fav=false;if(!b.dataset.c)state.made=""}renderList()});
+  bindCards();
+}
+function renderTags(){
+  const tags=allTags(), untagged=state.recipes.filter(r=>!r.tags.length).length;
+  main.innerHTML=`<h1>Tags</h1><p class="sub">Tags sort your recipes here and become chapters in your cookbook.</p>
+  ${tags.length?`<div class="taglist">${tags.map(t=>`<button data-t="${esc(t.name)}">${esc(t.name)}<small>${t.count}</small></button>`).join("")}</div>`:`<div class="empty"><h3>No tags yet</h3><p>Add tags like Breakfast, Beef or Weeknight when you edit a recipe.</p></div>`}
+  ${untagged?`<p class="sub" style="margin-top:18px">${untagged} recipe${untagged>1?"s have":" has"} no tags.</p>`:""}`;
+  main.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.t;state.fav=false;state.q="";setView("recipes")});
+}
+function hiTimes(s){return esc(s).replace(/\b(\d+(?:\s*(?:to|-|–)\s*\d+)?\s*(?:minutes?|mins?|hours?|hrs?|seconds?|secs?))\b/gi,"<em>$1</em>").replace(/\b((?:one|two|three|four|five|ten|fifteen|twenty|thirty)(?:\s+to\s+(?:one|two|three|four|five|ten|fifteen|twenty|thirty))?\s+(?:minutes?|hours?))\b/gi,"<em>$1</em>")}
+function renderDetail(){
+  const r=state.recipes.find(x=>x.id===state.current);if(!r)return setView("recipes");
+  const inBook=state.book.selected.includes(r.id);
+  const baseS=(()=>{const m=String(r.servings||"").match(/\d+(?:\.\d+)?/);return m?parseFloat(m[0]):0})();
+  if(state.scaleFor!==r.id){state.scaleFor=r.id;state.scaleN=baseS||1}
+  const k=baseS?state.scaleN/baseS:state.scaleN;
+  const ings=rawLines(r.ingredients).map(x=>isHead(x)?`<li class="h">${esc(headText(x))}</li>`:`<li>${esc(scaleLine(clean(x),k)).replace(/^([\d¼½¾⅓⅔⅛\/.\s-]+)/,"<b>$1</b>")}</li>`).join("");
+  const steps=rawLines(r.steps).filter(x=>!isHead(x)).map((x,i)=>`<div class="step"><span class="n">${i+1}</span><div>${hiTimes(clean(x))}</div></div>`).join("");
+  main.innerHTML=`<div class="bar"><button class="btn" id="back">Back</button></div>
+  <div class="top"><div class="hero">${r.photo?`<img src="${r.photo}" alt="${esc(r.title)}">`:""}</div>
+   <div class="info"><h1>${esc(r.title)}</h1>
+    <div class="acts">
+     <button class="act" id="a-pin" aria-pressed="${r.pinned}"><span>${ico("pin")}</span>Pin</button>
+     <button class="act" id="a-fav" aria-pressed="${r.fav}"><span>${ico("heart")}</span>Favorite</button>
+     <button class="act" id="a-book" aria-pressed="${inBook}"><span>${ico("bookadd")}</span>${inBook?"In book":"Add to book"}</button>
+     <button class="act" id="a-print"><span>${ico("print")}</span>Print</button>
+     <button class="act" id="a-edit"><span>${ico("edit")}</span>Edit</button>
+    </div>
+    <div class="bigacts"><button class="btn primary" id="a-cook">Start cooking</button><button class="btn" id="a-plan">${ico("cal")} Add to plan</button><button class="btn" id="a-list">${ico("cart")} Add to groceries</button></div><div id="a-days"></div>
+    ${r.description?`<p class="d">${esc(r.description)}</p>`:""}
+    <div class="pills">${r.servings?`<span class="pill y">Serves ${esc(r.servings)}${r.servingSize?` · ${esc(r.servingSize)}`:""}</span>`:""}${r.prep?`<span class="pill">Prep ${esc(r.prep)}</span>`:""}${r.cook?`<span class="pill">Cook ${esc(r.cook)}</span>`:""}${r.calories?`<span class="pill" title="${r.caloriesEst?"Estimated":"From the recipe"}">${r.caloriesEst?"≈ ":""}${esc(r.calories)} cal per serving</span>`:""}</div>
+    ${r.video?`<a class="vid" href="${esc(/^https?:/i.test(r.video)?r.video:"https://"+r.video)}" target="_blank" rel="noopener">▶ Watch video</a>`:""}
+    <div class="rate" role="group" aria-label="Rating">${[1,2,3,4,5].map(n=>`<button data-star="${n}" aria-label="Rate ${n} of 5" aria-pressed="${r.rating>=n}">★</button>`).join("")}</div>
+    <div class="made"><button class="btn sm" id="a-made">I made this</button><span class="hint">${r.cooked?`Made ${r.cooked} time${r.cooked>1?"s":""}${r.lastCooked?`, last on ${new Date(r.lastCooked).toLocaleDateString()}`:""}`:"Not made yet"}</span>${r.cooked?`<button class="btn sm" id="a-unmade">Undo</button>`:""}</div>
+    ${r.tags.length?`<div class="pills" style="margin-top:12px">${r.tags.map(t=>`<button class="tag" data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
+   </div></div>
+  <div class="cols"><div class="box"><div class="scl"><h3>Ingredients</h3><div class="stp"><button id="sc-m" aria-label="Fewer">−</button><span id="sc-n">${baseS?`${fmtQ(state.scaleN)} serving${state.scaleN===1?"":"s"}`:`${fmtQ(state.scaleN)}× batch`}</span><button id="sc-p" aria-label="More">+</button></div></div>${k!==1?`<p class="hint" style="margin:0 0 4px">Scaled from ${baseS?esc(r.servings)+" servings":"the original recipe"}. <button class="linkb" id="sc-r">Reset</button></p>`:""}<ul class="ings">${ings||"<li>No ingredients yet.</li>"}</ul></div>
+   <div class="steps">${steps||`<div class="box">No steps yet.</div>`}${r.tip?`<div class="tipbox"><b>Tip.</b> ${esc(r.tip)}</div>`:""}${srcLine(r.source)}</div></div>${linksHTML(r)}`;
+  $("#back").onclick=()=>history.length&&setView(state.filter||state.fav||state.q?"recipes":"home");
+  $("#a-pin").onclick=async()=>{r.pinned=!r.pinned;await putRecipe(r,false,true);renderDetail()};
+  $("#a-fav").onclick=async()=>{r.fav=!r.fav;await putRecipe(r,false,true);renderDetail()};
+  $("#a-book").onclick=()=>{const s=new Set(state.book.selected);s.has(r.id)?s.delete(r.id):s.add(r.id);state.book.selected=[...s];putBook();renderDetail();toast(s.has(r.id)?"Added to your cookbook":"Removed from your cookbook")};
+  $("#a-edit").onclick=()=>setView("edit",r.id);
+  $("#a-cook").onclick=()=>{state.cs=0;setView("cook",r.id)};
+  $("#a-plan").onclick=()=>{const box=$("#a-days");if(box.innerHTML){box.innerHTML="";return}const ds=[...Array(14)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});
+    box.innerHTML=`<p class="hint" style="margin:6px 0">Which day?</p><div class="chips" style="justify-content:center">${ds.map(d=>`<button class="chip" data-pday="${dayKey(d)}">${i18nDay(d)}</button>`).join("")}</div>`;
+    box.querySelectorAll("[data-pday]").forEach(b=>b.onclick=()=>{const k=b.dataset.pday;(state.plan.days[k]=state.plan.days[k]||[]).push({id:r.id,s:baseS?state.scaleN:0});putPlan();box.innerHTML="";toast(`Added to ${b.textContent}`)})};
+  $("#a-list").onclick=()=>{addToGroc([{r,k:baseS?state.scaleN/baseS:state.scaleN}]);toast(`Added ${r.title} to your grocery list`)};
+  const SB=[.5,1,1.5,2,3,4];
+  $("#sc-m").onclick=()=>{if(baseS)state.scaleN=Math.max(1,state.scaleN-1);else state.scaleN=SB[Math.max(0,SB.indexOf(state.scaleN)-1)];renderDetail()};
+  $("#sc-p").onclick=()=>{if(baseS)state.scaleN=state.scaleN+1;else state.scaleN=SB[Math.min(SB.length-1,SB.indexOf(state.scaleN)+1)];renderDetail()};
+  const scr=$("#sc-r");if(scr)scr.onclick=()=>{state.scaleN=baseS||1;renderDetail()};
+  main.querySelectorAll("[data-star]").forEach(b=>b.onclick=async()=>{const n=+b.dataset.star;r.rating=r.rating===n?0:n;await putRecipe(r,false,true);renderDetail()});
+  $("#a-made").onclick=async()=>{r.cooked=(r.cooked||0)+1;r.lastCooked=Date.now();await putRecipe(r,false,true);toast("Nice! Logged it.");renderDetail()};
+  const um=$("#a-unmade");if(um)um.onclick=async()=>{r.cooked=Math.max(0,(r.cooked||0)-1);if(!r.cooked)r.lastCooked=0;await putRecipe(r,false,true);renderDetail()};
+  $("#a-print").onclick=()=>doPrint(bookHTML([r],true));
+  main.querySelectorAll(".tag").forEach(b=>b.onclick=()=>{state.filter=b.dataset.t;state.fav=false;state.q="";setView("recipes")});
+  bindCards();
+}
+function srcLine(s){if(!s)return "";const u=/^https?:\/\//i.test(s)?s:(/^[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(s)?"https://"+s:"");return `<p class="hint">From ${u?`<a href="${esc(u)}" target="_blank" rel="noopener" style="color:var(--coral)">${esc(s)}</a>`:esc(s)}</p>`}
+function linksHTML(r){
+  const out=r.links.map(l=>({l,x:state.recipes.find(y=>y.id===l.id)})).filter(o=>o.x);
+  const used=state.recipes.filter(y=>y.id!==r.id&&y.links.some(l=>l.id===r.id));
+  return (out.length?`<h2 class="sec">Goes with</h2><div class="grid">${out.map(o=>cardHTML(o.x,o.l.note)).join("")}</div>`:"")+(used.length?`<h2 class="sec">Used in</h2><div class="grid">${used.map(y=>cardHTML(y)).join("")}</div>`:"");
+}
+function renderEdit(){
+  const ex=state.recipes.find(x=>x.id===state.current);
+  const r=normalize(ex||state.draft||{id:uid(),title:"",tags:[]});
+  const isNew=!ex; let photo=r.photo; let tags=[...r.tags];
+  main.innerHTML=`<h1>${isNew?"Add a recipe":"Edit recipe"}</h1>${state.linkTo&&isNew?`<p class="tipbox" style="margin:0 0 14px">This recipe will be linked to “${esc(state.recipes.find(x=>x.id===state.linkTo)?.title||"")}”.</p>`:""}<p class="sub">One ingredient or step per line. End a line with a colon to start a group, like “Sauce:”.</p>
+  <div class="form">
+   <label>Recipe name<input type="text" id="f-title" value="${esc(r.title)}" placeholder="Adana sheet pan kebabs"></label>
+   <label>Short description <span class="hint">Shows under the title in the app and the book.</span><textarea id="f-desc" style="min-height:70px">${esc(r.description)}</textarea></label>
+   <div><label for="f-tag">Tags <span class="hint">Press Enter or comma after each one. Tags become cookbook chapters.</span></label>
+    <div class="tagin" id="tagin" style="margin-top:6px"><input type="text" id="f-tag" list="taglist" placeholder="Breakfast, Beef, Weeknight"></div>
+    <datalist id="taglist">${allTags().map(t=>`<option value="${esc(t.name)}">`).join("")}</datalist><div class="sugg" id="sugg"></div></div>
+   <div class="frow">
+    <label>Serves<input type="text" id="f-serv" value="${esc(r.servings)}" placeholder="8"></label>
+    <label>Serving size<input type="text" id="f-ssize" value="${esc(r.servingSize)}" placeholder="1 slice"></label>
+    <label>Prep time<input type="text" id="f-prep" value="${esc(r.prep)}" placeholder="15 min"></label>
+    <label>Cook time<input type="text" id="f-cook" value="${esc(r.cook)}" placeholder="35 min"></label>
+    <label>Calories per serving<input type="text" id="f-cal" inputmode="numeric" value="${esc(r.calories)}" placeholder="250"></label>
+   </div>
+   ${store.sample?`<div class="bar" style="margin:-6px 0 0"><button type="button" class="btn sm" id="f-calest">Check servings &amp; calories</button><span class="hint" id="f-cst">Reads the ingredients and steps to work out servings, serving size and calories. Missing ones also fill in automatically when you save.</span></div>`:""}
+   <label>Ingredients<textarea id="f-ing" placeholder="Kebabs:&#10;2 lb (905 g) ground beef or lamb&#10;½ white onion">${esc(r.ingredients)}</textarea></label>
+   ${store.sample?`<div class="bar" style="margin:-6px 0 0"><button type="button" class="btn sm" id="f-grams">Add grams</button><span class="hint" id="f-gst">Adds grams in parentheses after each cup, tbsp, tsp, oz and lb.</span></div>`:""}
+   <label>Instructions<textarea id="f-steps" placeholder="Blitz the onion, pepper and garlic until minced.&#10;Drain the liquid with a cheesecloth.">${esc(r.steps)}</textarea></label>
+   <label>Tip <span class="hint">Optional. Prints in a “Pro tip” box.</span><textarea id="f-tip" style="min-height:60px">${esc(r.tip)}</textarea></label>
+   <label>Source <span class="hint">Optional. A person, book or link.</span><input type="text" id="f-src" value="${esc(r.source)}"></label>
+   <label>Video link <span class="hint">Optional. YouTube, Instagram, TikTok or any web link.</span><input type="text" id="f-video" value="${esc(r.video)}" placeholder="https://www.youtube.com/watch?v=…"></label>
+   <div><label for="f-link">Linked recipes <span class="hint">Recipes this one needs, like a frosting for a cake. They show on the recipe and print with page numbers in the book.</span></label>
+    <div id="links" style="display:grid;gap:6px;margin:6px 0"></div>
+    <div class="bar" style="margin:0"><select id="f-link" style="flex:1;min-width:200px"><option value="">Link an existing recipe…</option>${state.recipes.filter(x=>x.id!==r.id).sort((a,b)=>a.title.localeCompare(b.title)).map(x=>`<option value="${x.id}">${esc(x.title)}</option>`).join("")}</select><button type="button" class="btn sm" id="f-newlink">Save and write a linked recipe</button></div></div>
+   <div><label for="f-photo">Photo</label><div class="photo-pick" style="margin-top:6px"><span id="thumb">${photo?`<img src="${photo}" alt="">`:""}</span><input type="file" id="f-photo" accept="image/*"><button class="btn sm" id="cropbtn" type="button" ${photo?"":"hidden"}>Crop photo</button><button class="btn sm" id="rmphoto" type="button" ${photo?"":"hidden"}>Remove photo</button></div>
+    <div id="cwrap" hidden style="margin-top:12px"><p class="hint" style="margin:0 0 8px">Drag across the part you want to keep, like just the food.</p><div id="cropper"><img id="cimg" alt="Photo to crop"><div id="csel"></div></div><div class="bar" style="margin:10px 0 0"><button class="btn sm primary" type="button" id="capply">Apply crop</button><button class="btn sm" type="button" id="ccancel">Cancel</button></div></div></div>
+   <div class="bar" style="margin-top:6px"><button class="btn primary" id="save">Save recipe</button><button class="btn" id="cancel">Cancel</button><span style="flex:1"></span>${isNew?"":`<button class="btn danger" id="del">Delete recipe</button>`}</div>
+  </div>`;
+  const tin=$("#f-tag"),box=$("#tagin");
+  function drawTags(){box.querySelectorAll(".tag").forEach(e=>e.remove());tags.forEach((t,i)=>{const b=document.createElement("button");b.type="button";b.className="tag";b.textContent=t+" ×";b.setAttribute("aria-label","Remove tag "+t);b.onclick=()=>{tags.splice(i,1);drawTags()};box.insertBefore(b,tin)});
+    const have=new Set(tags.map(t=>t.toLowerCase()));const s=allTags().filter(t=>!have.has(t.name.toLowerCase())).slice(0,12);
+    $("#sugg").innerHTML=s.map(t=>`<button type="button" class="chip" data-t="${esc(t.name)}">+ ${esc(t.name)}</button>`).join("");$("#sugg").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{addTag(c.dataset.t)})}
+  function addTag(v){v.split(",").map(normTag).filter(Boolean).forEach(t=>{if(!tags.some(x=>x.toLowerCase()===t.toLowerCase()))tags.push(t)});tin.value="";drawTags()}
+  tin.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===","){e.preventDefault();addTag(tin.value)}else if(e.key==="Backspace"&&!tin.value&&tags.length){tags.pop();drawTags()}});
+  tin.addEventListener("change",()=>{if(tin.value.trim())addTag(tin.value)});
+  drawTags();
+  let links=r.links.filter(l=>state.recipes.some(x=>x.id===l.id)).map(l=>({...l}));
+  function drawLinks(){$("#links").innerHTML=links.map((l,i)=>{const x=state.recipes.find(y=>y.id===l.id);return `<div class="chap"><span>${esc(x?.title||"")}</span><input type="text" data-li="${i}" value="${esc(l.note||"")}" placeholder="Note, like “for the frosting”" style="flex:1.2;padding:6px 8px"><button type="button" data-lr="${i}" aria-label="Remove link">✕</button></div>`}).join("");
+    $("#links").querySelectorAll("[data-li]").forEach(e=>e.oninput=()=>{links[+e.dataset.li].note=e.value});
+    $("#links").querySelectorAll("[data-lr]").forEach(e=>e.onclick=()=>{links.splice(+e.dataset.lr,1);drawLinks()})}
+  drawLinks();
+  let calEst=!!r.caloriesEst;$("#f-cal").addEventListener("input",()=>{calEst=false});
+  const ce=$("#f-calest");if(ce)ce.onclick=async()=>{const ing=$("#f-ing").value.trim();if(!ing)return toast("Add ingredients first.");ce.disabled=true;$("#f-cst").textContent="Checking…";
+    try{const n=await nutriCheck({title:$("#f-title").value,servings:$("#f-serv").value.trim(),ingredients:ing,steps:$("#f-steps").value});
+      const cur=$("#f-serv").value.trim();if(!cur&&n.servings)$("#f-serv").value=n.servings;if(n.servingSize&&!$("#f-ssize").value.trim())$("#f-ssize").value=n.servingSize;
+      if(n.calories>0){$("#f-cal").value=n.calories;calEst=true}
+      const differs=cur&&n.servings&&(cur.match(/\d+/)||[""])[0]!==(n.servings.match(/\d+/)||[""])[0];
+      $("#f-cst").innerHTML=esc(`${n.calories?`About ${n.calories} calories per serving${n.servingSize?" ("+n.servingSize+")":""}. `:""}${differs?`The steps suggest ${n.servings} servings, not ${cur}. ${n.note}`:""}`)+(differs?` <button type="button" class="linkb" id="f-usesv">Use ${esc(n.servings)} servings</button>`:"")+" Save to keep it.";
+      const us=$("#f-usesv");if(us)us.onclick=()=>{$("#f-serv").value=n.servings;$("#f-ssize").value=n.servingSize||$("#f-ssize").value;us.remove()}}
+    catch(e){$("#f-cst").textContent=e?.code==="not_granted"?"Claude access was turned down. Reload and choose Allow.":"Couldn’t check. Try again."}ce.disabled=false};
+  const gb=$("#f-grams");if(gb)gb.onclick=async()=>{const t=$("#f-ing").value.trim();if(!t)return toast("Add ingredients first.");gb.disabled=true;$("#f-gst").textContent="Adding grams…";
+    try{const j=await store.sample.json(`Add the weight in grams in parentheses right after each US measurement in these recipe ingredient lines, for example "1 cup (125 g) all-purpose flour" or "2 tbsp (28 g) butter". Use standard US kitchen weights for that specific ingredient. Convert metric-only amounts (ml, liters, kg) to US units first and keep the grams in parentheses. Leave unchanged: lines that already show grams, counted items (eggs, cloves, whole vegetables), "to taste" items and group headers ending with a colon. Keep every line in the same order with the original wording. Return only JSON: {"lines":["..."]}.\n\nINGREDIENTS:\n${t}`);
+      if(Array.isArray(j?.lines)&&j.lines.length){$("#f-ing").value=j.lines.join("\n");$("#f-gst").textContent="Done. Check the amounts, then save."}else $("#f-gst").textContent="Couldn’t add grams. Try again."}
+    catch(e){$("#f-gst").textContent=e?.code==="not_granted"?"Claude access was turned down. Reload and choose Allow.":e?.code==="rate_limited"?"Too many requests. Wait a minute and try again.":"Couldn’t add grams. Try again."}
+    gb.disabled=false};
+  $("#f-link").onchange=e=>{const v=e.target.value;if(v&&!links.some(l=>l.id===v))links.push({id:v,note:""});e.target.value="";drawLinks()};
+  $("#f-photo").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{photo=await shrinkImage(f);$("#thumb").innerHTML=`<img src="${photo}" alt="">`;$("#rmphoto").hidden=false;$("#cropbtn").hidden=false}catch{toast("That file isn’t an image this browser can read.")}});
+  $("#rmphoto").onclick=()=>{photo="";$("#thumb").innerHTML="";$("#rmphoto").hidden=true;$("#cropbtn").hidden=true;$("#cwrap").hidden=true};
+  {let box=null,drag=false;const cr=$("#cropper"),cs=$("#csel"),wrap=$("#cwrap");
+   const show=()=>{if(!box){cs.style.display="none";return}const x0=Math.min(box[0],box[2]),y0=Math.min(box[1],box[3]);Object.assign(cs.style,{display:"block",left:x0*100+"%",top:y0*100+"%",width:Math.abs(box[2]-box[0])*100+"%",height:Math.abs(box[3]-box[1])*100+"%"})};
+   const pt=e=>{const r=$("#cimg").getBoundingClientRect();return [Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))]};
+   $("#cropbtn").onclick=()=>{$("#cimg").src=photo;box=null;show();wrap.hidden=false;wrap.scrollIntoView({block:"center"})};
+   cr.onpointerdown=e=>{e.preventDefault();drag=true;cr.setPointerCapture(e.pointerId);const p=pt(e);box=[p[0],p[1],p[0],p[1]];show()};
+   cr.onpointermove=e=>{if(!drag)return;const p=pt(e);box[2]=p[0];box[3]=p[1];show()};
+   cr.onpointerup=cr.onpointercancel=()=>{drag=false};
+   $("#ccancel").onclick=()=>{wrap.hidden=true};
+   $("#capply").onclick=async()=>{if(!box||Math.abs(box[2]-box[0])<.05||Math.abs(box[3]-box[1])<.05)return toast("Drag across the part of the photo you want to keep.");try{photo=await cropSrc(photo,box);$("#thumb").innerHTML=`<img src="${photo}" alt="">`;wrap.hidden=true;toast("Cropped. Save the recipe to keep it.")}catch{toast("Couldn’t crop that photo.")}};}
+  $("#cancel").onclick=()=>{state.draft=null;state.linkTo=null;isNew?setView("home"):setView("detail",r.id)};
+  async function doSave(){
+    if(tin.value.trim())addTag(tin.value);
+    const title=$("#f-title").value.trim();if(!title){toast("Give the recipe a name first.");$("#f-title").focus();return null}
+    const nr={...r,title,description:$("#f-desc").value.trim(),tags,servings:$("#f-serv").value.trim(),servingSize:$("#f-ssize").value.trim(),prep:$("#f-prep").value.trim(),cook:$("#f-cook").value.trim(),calories:$("#f-cal").value.replace(/[^\d.]/g,""),caloriesEst:calEst&&!!$("#f-cal").value.trim(),ingredients:$("#f-ing").value,steps:$("#f-steps").value,tip:$("#f-tip").value.trim(),source:$("#f-src").value.trim(),video:$("#f-video").value.trim(),photo,links};
+    if(isNew&&!state.book.selected.includes(nr.id)){state.book.selected.push(nr.id);putBook()}
+    state.draft=null;await putRecipe(nr);
+    const changed=!isNew&&(r.ingredients!==nr.ingredients||r.servings!==nr.servings)&&nr.caloriesEst;
+    if(store.sample&&nr.ingredients.trim()&&(!nr.servings||!nr.servingSize||!nr.calories||changed)){(async()=>{try{const n=await nutriCheck(nr);const cur=state.recipes.find(x=>x.id===nr.id);if(!cur)return;
+      if(!cur.servings&&n.servings)cur.servings=n.servings;if(!cur.servingSize&&n.servingSize)cur.servingSize=n.servingSize;if((!cur.calories||cur.caloriesEst)&&n.calories>0){cur.calories=String(n.calories);cur.caloriesEst=true}
+      await putRecipe(cur,true,true);toast("Added servings and calories");if(state.view==="detail"&&state.current===cur.id)renderDetail()}catch(e){}})()}
+    if(state.linkTo&&state.linkTo!==nr.id){const p=state.recipes.find(x=>x.id===state.linkTo);if(p&&!p.links.some(l=>l.id===nr.id)){p.links.push({id:nr.id,note:""});await putRecipe(p,false,true)}}
+    return nr;
+  }
+  $("#save").onclick=async()=>{const parent=state.linkTo;const nr=await doSave();if(!nr)return;state.linkTo=null;toast(parent?"Recipe saved and linked":"Recipe saved");open(parent&&parent!==nr.id?parent:nr.id)};
+  $("#f-newlink").onclick=async()=>{const nr=await doSave();if(!nr)return;state.linkTo=nr.id;toast("Saved. Now write the linked recipe.");setView("edit")};
+  const d=$("#del");if(d)d.onclick=async()=>{if(confirm(`Delete “${r.title}”? This can’t be undone.`)){await removeRecipe(r.id);toast("Recipe deleted");setView("recipes")}};
+}
+const IMPORT_PROMPT=(m,img)=>`Extract every distinct cooking recipe from the material below${img?" and the attached images":""}. When a post has a main recipe plus a sub-recipe (frosting, sauce, dough, filling, dressing), return them as separate recipes. Return only JSON: {"recipes":[{"title":"","description":"one or two sentences","servings":"realistic number of servings; use the yield in the steps (cut into 8 wedges, makes 12) if it differs from the stated number","prep":"like 15 min","cook":"","servingSize":"short serving size like 1 slice or 1 cup","calories":"calories per serving as a number; if the material does not say, estimate it from the ingredients and servings","caloriesEstimated":"true if you estimated the calories, false if stated","ingredients":["one string per ingredient; a group header ends with a colon"],"steps":["one string per step, no numbering"],"tip":"","tags":["1-4 short Title Case tags such as meal type and main ingredient"],"source":"website, account or URL if shown","video":"URL of a recipe video if one is shown or linked, else empty","uses":["titles of other recipes in this list that this recipe needs, e.g. a cake uses its frosting"]${img?`,"photo_box":"first recipe only: [left, top, right, bottom] as numbers from 0 to 1 giving the position in the FIRST image of the finished-dish photo, tightly around the photo only (no text, buttons, ads or logos). Use null if the first image has no dish photo."`:""}}]}. Use "" for unknown fields. Keep the original wording, but write amounts in US units: cups, tablespoons (tbsp), teaspoons (tsp), ounces (oz), pounds (lb) and °F. Convert milliliters, liters and kilograms to US units. After every measurable US amount add its weight in grams in parentheses using standard kitchen weights for that ingredient, for example 1 cup (125 g) all-purpose flour or 2 tbsp (28 g) butter; skip grams for counted items (eggs, cloves, whole vegetables) and to-taste items. Do not invent recipes or add ones that are not in the material. Existing tags you may reuse: ${allTags().map(t=>t.name).join(", ")||"none"}.\n\nMATERIAL:\n${m}`;
+function dur(v){const s=String(v||"").trim();const m=s.match(/^PT?(?:(\d+)H)?(?:(\d+)M)?$/i);if(m&&(m[1]||m[2]))return [m[1]?m[1]+" hr":"",m[2]?m[2]+" min":""].filter(Boolean).join(" ");return s}
+function txt(v){if(v==null)return "";if(Array.isArray(v))return v.map(txt).filter(Boolean).join("\n");if(typeof v==="object"){if(v.itemListElement)return (v.name?v.name+":\n":"")+txt(v.itemListElement);return txt(v.text??v.name??"")}return String(v).replace(/<[^>]+>/g," ").replace(/&nbsp;/g," ").replace(/[ \t]+/g," ").trim()}
+function toTags(v){const a=Array.isArray(v)?v:String(v||"").split(",");const out=[];a.map(x=>normTag(typeof x==="string"?x:x?.name)).filter(Boolean).forEach(t=>{if(t.length<=30&&!out.some(o=>o.toLowerCase()===t.toLowerCase()))out.push(t)});return out.slice(0,6)}
+function imgOf(v){if(!v)return "";if(Array.isArray(v))return imgOf(v[0]);if(typeof v==="object")return imgOf(v.url||v.contentUrl||v.data);const s=String(v);return s.startsWith("data:image")?s:(s.length>200&&/^[A-Za-z0-9+/=\s]+$/.test(s)?"data:image/jpeg;base64,"+s.replace(/\s/g,""):"")}
+function mapRecipe(j){
+  const p=(...ks)=>{for(const k of ks)if(j[k]!=null&&j[k]!=="")return j[k];return ""};
+  return normalize({id:uid(),title:txt(p("title","name")).split("\n")[0],description:txt(p("description","summary","intro")),servings:txt(p("servings","yield","recipeYield","serves")).split("\n")[0],calories:String(txt(p("calories"))||(j.nutrition?txt(j.nutrition.calories):"")||"").replace(/[^\d.]/g,""),caloriesEst:j.caloriesEstimated===true||j.caloriesEstimated==="true",servingSize:txt(p("servingSize","serving_size"))||(j.nutrition?txt(j.nutrition.servingSize):""),prep:dur(txt(p("prep","prepTime","prep_time"))),cook:dur(txt(p("cook","cookTime","cook_time","totalTime","total_time"))),ingredients:txt(p("ingredients","recipeIngredient","ingredientLines","ingredient_lines")),steps:txt(p("steps","directions","instructions","recipeInstructions","method")),tip:txt(p("tip","notes","note","tips")),tags:toTags(p("tags","categories","category","recipeCategory","keywords","courses")),source:txt(p("source","url","sourceUrl","source_url","link")).split("\n")[0],video:(o=>typeof o==="object"&&o?(o.contentUrl||o.embedUrl||o.url||""):txt(o).split("\n")[0])(p("video","videoUrl","video_url")),photo:"",_img:imgOf(p("photo","image","images","imageUrl","photo_data","photos")),_uses:Array.isArray(j.uses)?j.uses.map(String):[],_box:j.photo_box===null?null:(Array.isArray(j.photo_box)&&j.photo_box.length===4?j.photo_box.map(Number):undefined)});
+}
+function findRecipes(o,out=[],d=0){if(!o||d>8)return out;if(Array.isArray(o)){o.forEach(x=>findRecipes(x,out,d+1));return out}if(typeof o!=="object")return out;
+  const t=o["@type"],isR=(Array.isArray(t)?t:[t]).some(x=>String(x).toLowerCase()==="recipe");const ks=Object.keys(o).map(k=>k.toLowerCase());
+  if(isR||((ks.includes("title")||ks.includes("name"))&&ks.some(k=>/ingredient|direction|instruction|steps|method/.test(k)))){out.push(o);return out}
+  Object.values(o).forEach(v=>{if(v&&typeof v==="object")findRecipes(v,out,d+1)});return out}
+let JSZ=null,lastSig="";
+function loadJSZip(){if(JSZ)return JSZ;JSZ=new Promise((res,rej)=>{if(window.JSZip)return res(window.JSZip);const sc=document.createElement("script");sc.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";sc.onload=()=>window.JSZip?res(window.JSZip):rej(new Error("zip_lib"));sc.onerror=()=>rej(new Error("zip_lib"));document.head.appendChild(sc)}).catch(e=>{JSZ=null;throw e});return JSZ}
+let IMGMAP={};
+function cmDecode(buf){let bin="";for(let i=0;i<buf.length;i+=8192)bin+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));let t="";for(const ch of btoa(bin)){const c=ch.charCodeAt(0);t+=c>=65&&c<=90?String.fromCharCode(c+32):c>=97&&c<=122?String.fromCharCode(c-32):c>=48&&c<=57?String.fromCharCode(105-c):ch}return new TextDecoder().decode(Uint8Array.from(atob(t),x=>x.charCodeAt(0)))}
+function cmMins(n){n=+n||0;if(!n)return "";const h=Math.floor(n/60),m=n%60;return [h?h+" hr":"",m?m+" min":""].filter(Boolean).join(" ")}
+function mapCM(j){
+  const list=j.ingredients||[],allOnes=list.length>1&&list.every(i=>+i.quantity===1&&!i.measure);const ing=[];let g="";
+  list.forEach(i=>{const gr=String(i.group||"").trim();if(gr!==g){g=gr;if(g)ing.push(g.replace(/:?$/,":"))}
+    const nm=String(i.name||"").trim(),q=+i.quantity;const omit=!i.measure&&q===1&&(allOnes||/\d/.test(nm));
+    const line=[(!q||omit)?"":fmtQ(q),String(i.measure||"").trim(),nm].filter(Boolean).join(" ")+(i.notes?`, ${i.notes}`:"");if(line.trim())ing.push(line)});
+  const st=String(j.servingtype||"").trim(),sv=+j.serving||0;
+  return normalize({id:uid(),title:String(j.name||"").trim(),description:j.desc&&j.desc!==j.name?String(j.desc).trim():"",servings:sv&&!(sv===1&&!st)?String(sv):"",servingSize:st?"1 "+(/(cookie|brownie|smoothie|pie|bowl|roll|bar|slice|cup|piece|serving|biscuit|muffin|cupcake|sandwich|taco|wrap|patty)s$/i.test(st)?st.replace(/s$/i,"").replace(/sandwiche$/i,"sandwich"):st.replace(/ies$/i,"y").replace(/(?<!s)s$/i,"")):"",
+    prep:cmMins(j.preptime),cook:cmMins(j.cooktime),ingredients:ing.join("\n"),steps:(j.directions||[]).map(d=>String(d.text||"").trim()).filter(Boolean).join("\n"),
+    tip:[j.notes,j.pairings?"Pairs with: "+j.pairings:""].filter(Boolean).join(" "),tags:toTags(j.categoryNames||[]),source:String(j.source||""),video:String(j.video||""),
+    rating:+j.rating||0,cooked:+j.cookcount||0,fav:!!j.fave,photo:"",_img:j.displayphoto?IMGMAP[String(j.displayphoto).split("/").pop()]||"":"",_uses:[]});
+}
+async function gunzip(buf){return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).text()}
+async function readFile(f){
+  const name=f.name.toLowerCase(),buf=new Uint8Array(await f.arrayBuffer());let text,zipImg="";
+  lastSig=Array.from(buf.slice(0,8)).map(b=>b>31&&b<127?String.fromCharCode(b):".").join("");
+  if(/\.cookbook$/.test(name)&&buf[0]!==0x7b&&buf[0]!==0x5b&&!(buf[0]===0x1f&&buf[1]===0x8b)&&!(buf[0]===0x50&&buf[1]===0x4b)){try{const j=JSON.parse(cmDecode(buf));if(j&&(j.name||j.ingredients))return {recipes:[mapCM(j)]}}catch(e){}}
+  if(buf[0]===0x1f&&buf[1]===0x8b){text=await gunzip(buf)}
+  else if(buf[0]===0x50&&buf[1]===0x4b){const Z=await loadJSZip();const z=await Z.loadAsync(buf);const parts=[];
+    for(const e of Object.values(z.files)){if(e.dir)continue;const n=e.name.toLowerCase();if(/__macosx|\.ds_store/.test(n))continue;
+      if(/\.(jpe?g|png|webp|gif|heic)$/.test(n)){if(!zipImg&&!/\.heic$/.test(n))zipImg=`data:image/${n.endsWith("png")?"png":n.endsWith("webp")?"webp":n.endsWith("gif")?"gif":"jpeg"};base64,${await e.async("base64")}`}
+      else{const b=await e.async("uint8array");parts.push(b[0]===0x1f&&b[1]===0x8b?await gunzip(b):new TextDecoder().decode(b))}}
+    const found=[];for(const t of parts){try{findRecipes(JSON.parse(t),found)}catch(e){}}
+    if(found.length){const rs=found.map(mapRecipe);if(zipImg&&rs.length===1&&!rs[0]._img)rs[0]._img=zipImg;return {recipes:rs}}
+    text=parts.join("\n\n")}
+  else text=new TextDecoder().decode(buf);
+  if(text.startsWith("bplist"))throw {code:"binary"};
+  if(/\.(json|cookbook)$/.test(name)||/^\s*[\[{]/.test(text)){try{const o=findRecipes(JSON.parse(text));if(o.length)return {recipes:o.map(mapRecipe)}}catch(e){}}
+  if(/^\s*<\?xml|<plist|<recipe/i.test(text.slice(0,500))&&!/<html/i.test(text.slice(0,500))){try{const x=new DOMParser().parseFromString(text,"application/xml");const recs=[...x.querySelectorAll("recipe,Recipe")];if(recs.length){const g=(e,t)=>[...e.querySelectorAll(t)].map(n=>n.textContent.trim()).filter(Boolean);return {recipes:recs.map(e=>mapRecipe({title:g(e,"title,name")[0]||"",ingredients:g(e,"ingredient,ingredients > *"),steps:g(e,"step,instruction,direction"),servings:g(e,"servings,yield")[0]||"",tags:g(e,"category,tag"),source:g(e,"url,source")[0]||"",description:g(e,"description,summary")[0]||"",tip:g(e,"notes,note")[0]||""}))}}}catch(e){}}
+  if(/\.(html?|xml)$/.test(name)||/<html|<script/i.test(text.slice(0,3000))){const d=new DOMParser().parseFromString(text,"text/html");const o=[];d.querySelectorAll('script[type="application/ld+json"]').forEach(x=>{try{findRecipes(JSON.parse(x.textContent),o)}catch(e){}});if(o.length)return {recipes:o.map(mapRecipe)};d.querySelectorAll("script,style").forEach(x=>x.remove());d.querySelectorAll("br,p,li,div,h1,h2,h3,h4,tr").forEach(x=>x.append("\n"));return {text:(d.body?.textContent||"").replace(/[ \t]+/g," ").replace(/\n\s*\n\s*\n+/g,"\n\n")}}
+  return {text};
+}
+function chunks(t,size=14000){const out=[];let cur="";String(t).split("\n").forEach(l=>{if(cur.length+l.length>size&&cur){out.push(cur);cur=cur.slice(-3000).replace(/^[^\n]*\n/,"")}cur+=l+"\n"});if(cur.trim())out.push(cur);return out.length?out:["(see images)"]}
+async function toJpegBlob(src){return new Promise(res=>{const img=new Image();img.onload=()=>{const k=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*k));c.height=Math.max(1,Math.round(img.naturalHeight*k));const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);c.toBlob(b=>res(b),"image/jpeg",.85)};img.onerror=()=>res(null);img.src=src})}
+async function normImgs(list){const out=[];for(const f of list){const u=URL.createObjectURL(f);try{const b=await toJpegBlob(u);if(b&&b.size)out.push(b)}finally{URL.revokeObjectURL(u)}}return out}
+async function aiExtract(material,images,status,res){
+  if(images.length){images=await normImgs(images);if(!images.length&&!material)throw {code:"image_rejected"}}
+  const parts=chunks(material||"(see images)");
+  for(let i=0;i<parts.length;i++){status(parts.length>1?`Reading part ${i+1} of ${parts.length}…`:"Reading the recipe…");
+    const im=images.length&&i===0;const j=await store.sample.json(IMPORT_PROMPT(parts[i],im),im?{images}:{});
+    (j?.recipes||[]).forEach(r=>res.push(mapRecipe(r)))}
+}
+const PDFJS="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+let pdfLib=null;
+function loadPdfJs(){if(pdfLib)return pdfLib;pdfLib=new Promise((res,rej)=>{if(window.pdfjsLib)return res(window.pdfjsLib);const sc=document.createElement("script");sc.src=PDFJS+"pdf.min.js";sc.onload=()=>{const L=window.pdfjsLib;if(!L)return rej(new Error("pdf_lib"));L.GlobalWorkerOptions.workerSrc=PDFJS+"pdf.worker.min.js";const w=document.createElement("script");w.src=PDFJS+"pdf.worker.min.js";w.onload=()=>res(L);w.onerror=()=>res(L);document.head.appendChild(w)};sc.onerror=()=>rej(new Error("pdf_lib"));document.head.appendChild(sc)}).catch(e=>{pdfLib=null;throw e});return pdfLib}
+async function readPdf(f,status){
+  const L=await loadPdfJs();const doc=await L.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;const pages=[];
+  for(let i=1;i<=doc.numPages;i++){status(doc.numPages>1?`Reading page ${i} of ${doc.numPages}…`:"Reading the PDF…");
+    const tc=await (await doc.getPage(i)).getTextContent();const lines=[];let line="",y=null;
+    tc.items.forEach(it=>{if(it.str===undefined)return;const ny=it.transform[5];if(y!==null&&Math.abs(ny-y)>2){lines.push(line);line=""}line+=it.str;y=ny;if(it.hasEOL){lines.push(line);line="";y=null}});
+    if(line)lines.push(line);pages.push(lines.map(l=>l.replace(/\s+/g," ").trim()).filter(Boolean).join("\n"))}
+  const scan=[];pages.forEach((t,i)=>{if(t.replace(/\s/g,"").length<25)scan.push(i+1)});
+  return {doc,pages,text:pages.filter((t,i)=>!scan.includes(i+1)).join("\n\n"),scan};
+}
+async function pdfPhoto(doc,only){
+  const L=window.pdfjsLib;if(!L||!L.OPS)return "";let best=null;
+  for(let p=only||1;p<=(only||Math.min(doc.numPages,2));p++){const page=await doc.getPage(p);const ops=await page.getOperatorList();
+    for(let i=0;i<ops.fnArray.length;i++){const fn=ops.fnArray[i];if(fn!==L.OPS.paintImageXObject&&fn!==L.OPS.paintJpegXObject)continue;
+      const name=ops.argsArray[i][0];const objs=String(name).startsWith("g_")?page.commonObjs:page.objs;
+      const img=await new Promise(res=>{const t=setTimeout(()=>res(null),4000);try{objs.get(name,v=>{clearTimeout(t);res(v)})}catch(e){clearTimeout(t);try{res(objs.get(name))}catch(e2){res(null)}}});
+      if(img&&img.width*img.height>(best?best.width*best.height:0))best=img}
+    if(best)break}
+  if(!best||best.width<200||best.height<120)return "";
+  const c=document.createElement("canvas");c.width=best.width;c.height=best.height;const x=c.getContext("2d");
+  if(best.bitmap)x.drawImage(best.bitmap,0,0);
+  else if(best.data){const id=x.createImageData(best.width,best.height),d=best.data,o=id.data,px=best.width*best.height;
+    if(d.length===px*4)o.set(d);else if(d.length===px*3){for(let a=0,b=0;a<d.length;a+=3,b+=4){o[b]=d[a];o[b+1]=d[a+1];o[b+2]=d[a+2];o[b+3]=255}}else return "";x.putImageData(id,0,0)}
+  else if(typeof HTMLImageElement!=="undefined"&&best instanceof HTMLImageElement)x.drawImage(best,0,0);
+  else return "";
+  return c.toDataURL("image/jpeg",.9)}
+async function pdfPagesToImages(doc,from,to){const out=[];for(let i=from;i<=to;i++){const pg=await doc.getPage(i);const v=pg.getViewport({scale:1});const vp=pg.getViewport({scale:Math.min(2.5,1600/Math.max(v.width,v.height))});const c=document.createElement("canvas");c.width=Math.round(vp.width);c.height=Math.round(vp.height);const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:ctx,viewport:vp}).promise;out.push(await new Promise(r=>c.toBlob(r,"image/jpeg",.85)))}return out}
+async function finishImport(list,{photoFile,source}){
+  for(const r of list){
+    if(source&&!r.source)r.source=source;
+    if(!r.video&&/youtube\.com|youtu\.be|instagram\.com\/(reel|p|tv)\/|tiktok\.com|vimeo\.com/i.test(r.source))r.video=r.source;
+    r.links=[];
+    (r._uses||[]).forEach(t=>{const tl=t.toLowerCase().trim();const m=list.find(x=>x!==r&&x.title.toLowerCase()===tl)||state.recipes.find(x=>x.title.toLowerCase()===tl);if(m&&!r.links.some(l=>l.id===m.id))r.links.push({id:m.id,note:""})});
+    if(r._img){try{r.photo=await shrinkSrc(r._img)}catch(e){}}
+    delete r._img;delete r._uses;
+  }
+  if(photoFile&&list[0]&&!list[0].photo){const b=list[0]._box;try{
+    if(Array.isArray(b)&&b.every(v=>v>=0&&v<=1)&&Math.abs(b[2]-b[0])>.08&&Math.abs(b[3]-b[1])>.08){const u=URL.createObjectURL(photoFile);try{list[0].photo=await cropSrc(u,b)}finally{URL.revokeObjectURL(u)}}
+    else if(b!==null)list[0].photo=await shrinkImage(photoFile)}catch(e){}}
+  list.forEach(r=>delete r._box);
+  if(store.sample)for(const r of list.slice(0,12)){if(r.servings&&r.servingSize&&r.calories)continue;try{const n=await nutriCheck(r);if(!r.servings)r.servings=n.servings;if(!r.servingSize)r.servingSize=n.servingSize;if(!r.calories&&n.calories){r.calories=String(n.calories);r.caloriesEst=true}}catch(e){if(e?.code==="rate_limited"||e?.code==="not_granted")break}}
+  const key=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+  const seen=new Map(),uniq=[];
+  for(const r of list){if(!r.title)continue;const k=key(r.title),o=seen.get(k);
+    if(!o){seen.set(k,r);uniq.push(r);continue}
+    ["description","servings","prep","cook","tip","source","photo"].forEach(f=>{if(!o[f]&&r[f])o[f]=r[f]});
+    if(rawLines(r.ingredients).length>rawLines(o.ingredients).length)o.ingredients=r.ingredients;
+    if(rawLines(r.steps).length>rawLines(o.steps).length)o.steps=r.steps;
+    r.tags.forEach(t=>{if(!hasTag(o,t))o.tags.push(t)});
+    r.links.forEach(l=>{if(!o.links.some(x=>x.id===l.id))o.links.push(l)});
+    list.forEach(x=>x.links.forEach(l=>{if(l.id===r.id)l.id=o.id}))}
+  const have=new Set(state.recipes.map(x=>key(x.title)));
+  uniq.forEach(r=>{const ids=new Set();r.links=r.links.filter(l=>l.id!==r.id&&!ids.has(l.id)&&ids.add(l.id));r._dup=have.has(key(r.title));r._on=!r._dup});
+  return uniq;
+}
+function renderResults(){
+  const f=state.found,saved=f.saved.map(id=>state.recipes.find(x=>x.id===id)).filter(Boolean);
+  main.innerHTML=`<h1>Import results</h1>
+  ${saved.length?`<p class="sub">Saved ${saved.length} recipe${saved.length>1?"s":""}. Tap one to check or edit it.</p><div class="grid">${saved.map(r=>cardHTML(r)).join("")}</div>`:`<p class="sub">No new recipes were saved.</p>`}
+  ${f.bad.length?`<div class="tipbox" style="margin-top:20px"><b>${f.bad.length} recipe${f.bad.length>1?"s":""} didn’t sync to your account.</b> ${esc(errMsg(store.lastErr))} They’re kept on this device for now. <button class="btn sm" id="retry">Try again</button></div>`:""}
+  ${f.dups.length?`<h2 class="sec">Already in your recipes</h2><p class="hint">These match names you already have, so they weren’t saved.</p><div class="imp">${f.dups.map((r,i)=>`<div class="chap"><span>${esc(r.title)}</span><button class="btn sm" data-dup="${i}">Save anyway</button></div>`).join("")}</div>`:""}
+  <div class="bar" style="margin-top:24px"><button class="btn primary" id="more">Import more</button><button class="btn" id="mine">Go to my recipes</button></div>`;
+  bindCards();
+  $("#more").onclick=()=>{state.found=null;renderPaste()};
+  $("#mine").onclick=()=>{state.found=null;state.filter="";state.fav=false;state.q="";setView("recipes")};
+  const rt=$("#retry");if(rt)rt.onclick=async()=>{rt.disabled=true;const still=[];for(const id of f.bad){const r=state.recipes.find(x=>x.id===id);if(r&&!(await putRecipe(r,true,true)))still.push(id)}f.bad=still;toast(still.length?"Still not syncing. Try again later.":"All synced");renderResults()};
+  main.querySelectorAll("[data-dup]").forEach(b=>b.onclick=async()=>{const r=f.dups[+b.dataset.dup];const {_dup,_on,...rec}=r;rec.links=rec.links.filter(l=>state.recipes.some(x=>x.id===l.id));if(!(await putRecipe(rec,true)))f.bad.push(rec.id);f.saved.push(rec.id);f.dups.splice(+b.dataset.dup,1);renderResults()});
+}
+function renderPaste(){
+  if(state.found)return renderResults();
+  const ai=!!store.sample;
+  main.innerHTML=`<h1>Add recipes</h1><p class="sub">Paste a link with its caption or recipe text. Or add photos, PDFs and exports. Everything gets grams, servings and calories.</p><p class="tipbox" id="p-st" role="status" hidden style="margin:0 0 16px"></p>
+  <div class="form">
+   <div class="onebox" id="p-drop">
+    <label for="p-text" style="font-size:1rem">Paste anything</label>
+    <textarea id="p-text" placeholder="An Instagram or website link plus its caption, a recipe from a message, or several recipes at once. You can also drop photos, PDFs or a folder here."></textarea>
+    <input type="hidden" id="p-url">
+    ${ai?"":`<p class="hint" style="margin:0">Reading pasted text and photos needs Claude access, which isn’t available in this view.</p>`}
+    <div class="bar" style="margin:0"><button class="btn primary" id="p-go" ${ai?"":"disabled"}>Read recipe</button><span class="hint" id="p-imgnote"></span></div>
+   </div>
+   <div class="addgrid">
+    ${store.imagesOk?`<label class="tile"><span>${ico("camera")}</span>Camera or photos<input type="file" id="p-img" accept="image/*" multiple hidden></label>`:""}
+    <label class="tile"><span>${ico("file")}</span>Files<input type="file" id="p-file" multiple accept=".cookbook,.pdf,application/pdf,.json,.html,.htm,.txt,.csv,.md,.xml" hidden></label>
+    <label class="tile"><span>${ico("folder")}</span>Whole folder<input type="file" id="p-dir" webkitdirectory multiple hidden></label>
+    <button class="tile" id="p-blank" type="button"><span>${ico("add")}</span>Type it in</button>
+   </div>
+   ${store.imagesOk?`<label class="toggle"><input type="checkbox" id="p-usephoto" checked> Use the first photo as the recipe photo</label>`:""}
+   <button id="p-imp" hidden type="button">Import files</button>
+   <p class="hint" style="margin:0">Instagram and most recipe sites can’t be opened by the app, so paste the caption or page text along with the link. Files: PDFs (typed or scanned), Cook Manager .cookbook, JSON, HTML, text, CSV and Markdown.</p>
+  </div>`;
+  $("#p-text").addEventListener("input",e=>{const m=e.target.value.match(/https?:\/\/\S+/);$("#p-url").value=m?m[0]:""});
+  $("#p-blank").onclick=()=>{state.draft=null;setView("edit")};
+  const pim=$("#p-img");if(pim)pim.onchange=()=>{const n=pim.files.length;$("#p-imgnote").textContent=n?`${n} photo${n>1?"s":""} added. Tap Read recipe.`:""};
+  const drop=$("#p-drop");["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,()=>drop.classList.remove("drag")));
+  drop.addEventListener("drop",e=>{e.preventDefault();const fs=[...e.dataTransfer.files];if(!fs.length)return;const dt=new DataTransfer();fs.forEach(f=>dt.items.add(f));
+    if(pim&&fs.every(f=>f.type.startsWith("image/"))){pim.files=dt.files;pim.onchange()}else{$("#p-file").files=dt.files;$("#p-file").onchange()}});
+  const st=m=>{const e=$("#p-st");if(!e)return;e.textContent=m;e.hidden=!m;if(m)e.scrollIntoView({block:"nearest"})};
+  const fail=(e,n)=>{const c=e?.code||"error";const m=c==="not_granted"?"Claude access was turned down. Reload the page and choose Allow when asked.":c==="rate_limited"?"Too many requests. Wait a minute and try again.":c==="image_rejected"?"That photo or page couldn’t be read. Take a screenshot of it and try that instead.":c==="images_unavailable"?"This view can’t send pictures to Claude. Open the app in a web browser, or send the file to me in chat.":(c==="refused"||c==="empty_completion")?"Claude couldn’t read that.":"Couldn’t read all of it.";st(n?`${m} Saving the ${n} found so far.`:`${m} (Error: ${c})`);toast(m)};
+  const done=async list=>{
+    if(!list.length){document.querySelectorAll("#p-go,#p-imp").forEach(b=>b.disabled=false);return st("No recipe found.")}
+    const key=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();let photosAdded=0;
+    for(const d of list.filter(r=>r._dup&&r.photo)){const ex=state.recipes.find(x=>key(x.title)===key(d.title));if(ex&&!ex.photo){ex.photo=d.photo;await putRecipe(ex,true,true);photosAdded++;d._photoDone=true}}
+    if(photosAdded)toast(`Added photos to ${photosAdded} recipe${photosAdded>1?"s":""} you already had`);
+    const fresh=list.filter(r=>!r._dup),dups=list.filter(r=>r._dup&&!r._photoDone);
+    if(fresh.length)st(`Saving ${fresh.length} recipe${fresh.length>1?"s":""}…`);
+    const ids=new Set(fresh.map(r=>r.id)),bad=[];
+    for(const r of fresh){r.links=r.links.filter(l=>ids.has(l.id)||state.recipes.some(x=>x.id===l.id));const {_dup,_on,...rec}=r;if(!(await putRecipe(rec,true)))bad.push(rec.id)}
+    if(list.length===1&&fresh.length===1&&!bad.length){toast("Recipe saved");open(fresh[0].id);return}
+    state.found={saved:fresh.map(r=>r.id),bad,dups};renderPaste();
+  };
+  $("#p-go").onclick=async()=>{
+    const text=$("#p-text").value.trim(),files=[...($("#p-img")?.files||[])].slice(0,store.maxImgs||4),url=$("#p-url").value.trim();
+    if(!text&&!files.length)return toast("Paste some text or add a photo first.");
+    if(!files.length&&/^\s*https?:\/\/\S+\s*$/.test(text))return st("The app can’t open links by itself. Paste the caption or recipe text along with the link, or add a screenshot.");
+    const btn=$("#p-go");btn.disabled=true;const got=[];
+    try{await aiExtract(text,files,st,got)}catch(e){fail(e,got.length);if(!got.length){btn.disabled=false;return}}
+    if(!got.length){btn.disabled=false;return st("No recipe found. Try pasting the full recipe text.")}
+    done(await finishImport(got,{photoFile:$("#p-usephoto")?.checked?files[0]:null,source:url}));
+  };
+  let dirFiles=null;
+  $("#p-dir").onchange=e=>{IMGMAP={};[...e.target.files].forEach(f=>{if(/\.(jpe?g|png|webp|gif)$/i.test(f.name))IMGMAP[f.name]=URL.createObjectURL(f)});dirFiles=[...e.target.files].filter(f=>/\.(cookbook|json|pdf|html?|txt|csv|md|xml)$/i.test(f.name)&&!f.name.startsWith("."));st(dirFiles.length?`${dirFiles.length} recipe files found in the folder. Importing…`:"No recipe files found in that folder.");if(dirFiles.length)$("#p-imp").click()};
+  $("#p-file").onchange=()=>{dirFiles=null;if($("#p-file").files.length)$("#p-imp").click()};
+  $("#p-imp").onclick=async()=>{
+    const files=dirFiles||[...$("#p-file").files];if(!files.length)return toast("Choose a file first.");
+    const btn=$("#p-imp");btn.disabled=true;const got=[],skipped=[],badPages=[];let attached=0,already=0,noimg=0;const tkey=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+    try{
+      for(const f of files){
+        const pre=files.length>1?`${f.name}: `:"";const sst=m=>st(pre+m);sst("Opening the file…");
+        if(/\.pdf$/i.test(f.name)||f.type==="application/pdf"){
+          const r=await readPdf(f,sst);
+          const idx=new Map(state.recipes.map(x=>[tkey(x.title),x]));
+          const matchT=ls=>{if(!ls.length)return null;const a=tkey(ls[0]),b=tkey(ls[0]+" "+(ls[1]||""));return idx.get(b)||idx.get(a)||(a.length>=12?state.recipes.find(x=>tkey(x.title).startsWith(a)):null)||null};
+          const hits=[];const seen=new Set();r.pages.forEach((t,i)=>{const ex=matchT(t.split("\n").map(s=>s.trim()).filter(Boolean));if(ex&&!seen.has(ex.id)){seen.add(ex.id);hits.push([i+1,ex])}});
+          if(hits.length){for(const [pn,ex] of hits){if(ex.photo){already++;continue}sst(hits.length>1?`Adding photos: page ${pn} of ${r.doc.numPages}…`:"Adding the photo…");let im="";try{im=await pdfPhoto(r.doc,pn)}catch(e){}
+              if(im){try{ex.photo=await shrinkSrc(im);await putRecipe(ex,true,true);attached++}catch(e){}}else noimg++}continue}
+          let pimg="";try{pimg=await pdfPhoto(r.doc)}catch(e){}
+          if(!store.sample){skipped.push(f.name);continue}
+          const n0=got.length;
+          if(r.text.trim()) await aiExtract(r.text,[],sst,got);
+          if(pimg&&got.length>n0&&!got[n0]._img)got[n0]._img=pimg;
+          if(r.scan.length){
+            if(!store.imagesOk){skipped.push(f.name);continue}
+            const n=store.maxImgs||4,S=r.scan;
+            for(let a=0;a<S.length;a+=n){const grp=S.slice(a,a+n);sst(S.length>1?`Reading scanned pages ${a+1} to ${a+grp.length} of ${S.length}…`:"Reading the scanned page…");
+              const imgs=[],pgs=[];for(const pn of grp){const bl=(await pdfPagesToImages(r.doc,pn,pn))[0];if(bl&&bl.size){imgs.push(bl);pgs.push(pn)}else badPages.push(pn)}
+              if(!imgs.length)continue;
+              const ask=(ims,label)=>store.sample.json(IMPORT_PROMPT(`(scanned PDF ${label}, attached as images in page order. If a recipe is cut off at the start or end, include what is visible.)`,true),{images:ims});
+              let j=null;
+              try{j=await ask(imgs,"pages "+pgs.join(", "))}catch(e){if(e?.code!=="image_rejected")throw e;
+                for(let q=0;q<imgs.length;q++){sst(`Retrying page ${pgs[q]}…`);try{const jj=await ask([imgs[q]],"page "+pgs[q]);(jj?.recipes||[]).forEach(x=>got.push(mapRecipe(x)))}catch(e2){if(e2?.code!=="image_rejected")throw e2;badPages.push(pgs[q])}}}
+              (j?.recipes||[]).forEach(x=>got.push(mapRecipe(x)))}}
+        }else{
+          let r;try{r=await readFile(f)}catch(e){skipped.push(f.name);continue}
+          if(r.recipes)got.push(...r.recipes);
+          else if(!store.sample)skipped.push(f.name);
+          else await aiExtract(r.text,[],sst,got);
+        }
+      }
+    }catch(e){
+      if(e?.message==="pdf_lib")st("Couldn’t load the PDF reader. Check your connection and try again.");
+      else if(e?.name==="PasswordException")st("That PDF is password protected. Remove the password and try again.");
+      else fail(e,got.length);
+      if(!got.length){btn.disabled=false;return}
+    }
+    if(attached||already||noimg){toast([attached?`Added photos to ${attached} recipe${attached>1?"s":""}`:"",already?`${already} already had a photo`:""].filter(Boolean).join(". "))}
+    if(!got.length&&(attached||already||noimg)){btn.disabled=false;return st(`Done. ${attached} photo${attached===1?"":"s"} added to recipes you already had${already?`, ${already} skipped because they already have one`:""}${noimg?`, ${noimg} had no photo in the PDF`:""}.`)}
+    if(!got.length){btn.disabled=false;return st(skipped.length?"These files need Claude access to read, which isn’t available in this view.":"No recipes found in those files."+(lastSig?` (File type code: ${lastSig}. Send this to Claude in chat.)`:""))}
+    if(skipped.length)toast(`Skipped ${skipped.length} file${skipped.length>1?"s":""} that need Claude access`);
+    if(badPages.length)toast(`Couldn’t read page${badPages.length>1?"s":""} ${badPages.join(", ")}. Everything else was imported.`);
+    st("");done(await finishImport(got,{}));
+  };
+}
+
+/* ===== Book ===== */
+const svgI={prep:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9"/>',cook:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',cal:'<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-6 1 1 2 2 2 3 0-3 0-5 1-7z"/>',serv:'<circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M3 20a5 5 0 0 1 10 0M11 20a5 5 0 0 1 10 0"/>'};
+const bi=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">${svgI[k]}</svg>`;
+const im=(src,cls="")=>src?`<img class="${cls}" src="${src}" alt="">`:`<div class="${cls} ph0"></div>`;
+function chaptersFor(recs){
+  const b=state.book, out=[];
+  b.chapters.forEach(t=>out.push({name:t,recs:[]}));
+  const more={name:"More recipes",recs:[]};
+  recs.forEach(r=>{const c=out.find(c=>hasTag(r,c.name));if(c)c.recs.push(r);else if(b.untagged||!b.chapters.length)more.recs.push(r)});
+  if(!b.chapters.length) more.name="Recipes";
+  const res=out.filter(c=>c.recs.length);if(more.recs.length)res.push(more);
+  res.forEach(c=>c.recs.sort((a,b)=>a.title.localeCompare(b.title)));
+  return res;
+}
+function icons(r){const it=[["prep","Prep time",r.prep],["cook","Cook time",r.cook],["serv","Servings",r.servings?r.servings+(r.servingSize?" ("+r.servingSize+")":""):""],["cal","Calories",r.calories?r.calories+" / serving":""]].filter(x=>x[2]);return it.length?`<div class="icons">${it.map(x=>`<div class="ic">${bi(x[0])}${x[1]}<b>${esc(x[2])}</b></div>`).join("")}</div>`:""}
+function ingHTML(r){return `<ul class="ing">${rawLines(r.ingredients).map(x=>isHead(x)?`<li class="ih">${esc(headText(x))}</li>`:`<li>${esc(clean(x))}</li>`).join("")}</ul>`}
+function insHTML(r){return `<ol class="ins">${rawLines(r.steps).filter(x=>!isHead(x)).map(x=>`<li>${esc(clean(x))}</li>`).join("")}</ol>`}
+function head(r){return `<div class="hd"><h2 class="t">${esc(r.title)}</h2>${r.description?`<p class="desc">${esc(r.description)}</p>`:""}</div>`}
+const tipH=r=>r.tip?`<div class="tip"><h4>Pro tip</h4>${esc(r.tip)}</div>`:"";
+const srcH=r=>(r.source?`<div class="src">From ${esc(r.source)}</div>`:"")+(r.video?`<div class="src">Video: ${esc(r.video)}</div>`:"");
+function seeH(r,pageOf){const ls=r.links.map(l=>({l,x:state.recipes.find(y=>y.id===l.id)})).filter(o=>o.x);if(!ls.length)return "";return `<div class="see"><h4>Goes with</h4>${ls.map(o=>`<div>${esc(o.x.title)}${o.l.note?` <span class="pgref">${esc(o.l.note)}</span>`:""}${pageOf[o.x.id]?` <span class="pgref">page ${pageOf[o.x.id]}</span>`:""}</div>`).join("")}</div>`}
+function recipePage(r,i,n,pageOf={}){
+  let L=state.book.layout;if(L==="mix")L="abdc"[i%4];if(!r.photo&&L!=="c")L="c";
+  const f=n?`<div class="folio">${n}</div>`:"";
+  if(L==="a")return `<section class="pg ra">${im(r.photo,"si")}<div class="ct">${head(r)}${icons(r)}<h4>Ingredients</h4>${ingHTML(r)}<h4>Instructions</h4>${insHTML(r)}${tipH(r)}${seeH(r,pageOf)}${srcH(r)}</div>${f}</section>`;
+  if(L==="b")return `<section class="pg rb">${im(r.photo,"ti")}<div class="ct rc" style="padding:.3in .6in .6in">${head(r)}${icons(r)}<h4>Ingredients</h4><div class="two">${ingHTML(r)}</div><h4>Instructions</h4>${insHTML(r)}${tipH(r)}${seeH(r,pageOf)}${srcH(r)}</div>${f}</section>`;
+  if(L==="d")return `<section class="pg rd"><div class="tp"><div class="ct">${head(r)}${icons(r)}<h4>Ingredients</h4>${ingHTML(r)}</div>${im(r.photo,"ri")}</div><div class="bt"><h4>Instructions</h4>${insHTML(r)}${tipH(r)}${seeH(r,pageOf)}${srcH(r)}</div>${f}</section>`;
+  return `<section class="pg rc">${head(r)}${icons(r)}<div class="band"><h4>Ingredients</h4><div class="two">${ingHTML(r)}</div></div><h4>Instructions</h4>${insHTML(r)}${tipH(r)}${seeH(r,pageOf)}${srcH(r)}${r.photo?im(r.photo,"bot"):""}${f}</section>`;
+}
+const chKey=n=>String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-");
+function autoDiv(recs){const ps=recs.map(r=>r.photo).filter(Boolean);return ps.sort((a,b)=>(PW.get(b)||0)-(PW.get(a)||0))[0]||""}
+function divSrc(name,recs){const v=(state.book.divPhotos||{})[chKey(name)];if(v==="upload")return state.imgs["div_"+chKey(name)]||autoDiv(recs);const r=v&&state.recipes.find(x=>x.id===v);return r?.photo||autoDiv(recs)}
+function dividerPage(c,i){
+  const ph=[...new Set([divSrc(c.name,c.recs),...c.recs.map(r=>r.photo)].filter(Boolean))],nm=`<h2 class="t">${esc(c.name)}</h2>`,num=`<div class="num">${pad(i+1)}</div>`;
+  const v=i%3;
+  if(v===0)return `<section class="pg fx dv dv1">${im(ph[0],"cvi")}<div class="ovw"><div class="ov" style="position:relative">${num}${nm}</div></div></section>`;
+  if(v===1)return `<section class="pg fx dv dv2">${ph[0]?im(ph[0],"bgi"):""}<div class="ov" style="position:relative">${num}${nm}</div></section>`;
+  return `<section class="pg fx dv3"><div class="cl">${im(ph[0])}${im(ph[1])}</div><div style="text-align:center;position:relative">${nm}</div><div class="cl">${im(ph[2])}${im(ph[3])}</div></section>`;
+}
+function coverSrc(recs){const b=state.book;if(b.coverPhoto==="upload")return state.imgs.cover;const r=state.recipes.find(x=>x.id===b.coverPhoto);return r?.photo||recs.find(r=>r.photo)?.photo||""}
+function coverPage(recs){
+  const b=state.book,src=coverSrc(recs),T=`<h1 class="t">${esc(b.title||"Cookbook")}</h1>`,A=b.author?`<div class="sc">${esc(b.author)}</div>`:"",S=b.subtitle?`<div class="lab">${esc(b.subtitle)}</div>`:"";
+  if(b.cover==="b")return `<section class="pg fx cvb"><div class="hd">${T}${S}</div>${im(src,"cvi")}<div class="ft">${A||"&nbsp;"}</div></section>`;
+  if(b.cover==="c")return `<section class="pg fx cvc">${A}${T}${im(src,"cvi")}${S}</section>`;
+  if(b.cover==="d")return `<section class="pg fx cvd"><div class="sp">${T}</div>${im(src,"cvi")}<div class="ft">${S}${A}</div></section>`;
+  return `<section class="pg fx cva"><div class="cvt">${T}${A}</div>${im(src,"cvi")}<div class="cvf">${S}</div></section>`;
+}
+function bookHTML(singles,single){
+  const b=state.book,s=SIZES[b.size],vars=`--pw:${s[1]}in;--ph:${s[2]}in`,cls=`bk p-${b.palette}`;
+  if(single)return {cls,vars,html:singles.map((r,i)=>recipePage(r,i,0)).join("")};
+  const sel=new Set(b.selected);if(b.withLinked){let g=true;while(g){g=false;state.recipes.forEach(r=>{if(sel.has(r.id))r.links.forEach(l=>{if(!sel.has(l.id)&&state.recipes.some(x=>x.id===l.id)){sel.add(l.id);g=true}})})}}
+  const recs=state.recipes.filter(r=>sel.has(r.id)),chs=chaptersFor(recs),pages=[];
+  const photos=recs.map(r=>r.photo).filter(Boolean);
+  pages.push(coverPage(recs));
+  if(b.welcome)pages.push(`<section class="pg fx wl">${im(state.imgs.welcome||photos[1]||photos[0],"wi")}<div class="ct"><div class="lab">a little hello</div><h2 class="t">${esc(b.welcomeTitle||"Welcome")}</h2>${b.author?`<div class="sc">${esc(b.author)}</div>`:""}${(b.welcomeText||"").split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join("")}</div></section>`);
+  if(b.quote&&b.quoteText)pages.push(`<section class="pg fx qt">${photos[2]?im(photos[2],"bgi"):""}<p>${esc(b.quoteText)}</p>${b.quoteBy?`<div class="lab">${esc(b.quoteBy)}</div>`:""}</section>`);
+  const start=pages.length+(b.toc&&recs.length?1:0)+1;let n=start;const toc=[],body=[];let ri=0;
+  const useCh=b.dividers&&b.chapters.length>0;const pageOf={};chs.forEach(c=>{if(useCh)n++;c.recs.forEach(r=>{pageOf[r.id]=n++})});n=start;
+  chs.forEach((c,ci)=>{
+    if(useCh){body.push(dividerPage(c,ci));n++}
+    const rows=[];c.recs.forEach(r=>{rows.push([r.title,n]);body.push(recipePage(r,ri++,n,pageOf));n++});
+    toc.push({c,ci,rows});
+  });
+  if(b.toc&&recs.length)pages.push(`<section class="pg toc"><h2 class="t">Contents</h2>${toc.map(t=>`${b.chapters.length?`<div class="tch"><span class="num">${pad(t.ci+1)}</span><h3 class="t">${esc(t.c.name)}</h3></div>`:""}${t.rows.map(x=>`<div class="tr"><span>${esc(x[0])}</span><i></i><span>${x[1]}</span></div>`).join("")}`).join("")}</section>`);
+  const tail=[];
+  if(b.planner)tail.push(`<section class="pg fx pl"><h2 class="t">On the menu</h2><div class="lab" style="text-align:center;margin-top:.1in">week of ____________</div><div class="plg"><div>${["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map(d=>`<div class="day lab">${d}</div>`).join("")}</div><div><div class="lab" style="text-align:center">Shopping list</div>${'<div class="ln bx"></div>'.repeat(22)}</div></div></section>`);
+  if(b.card)tail.push(`<section class="pg fx cd"><h2 class="t">Recipe card</h2><div class="icons"><div class="ic">${bi("prep")}Prep time<b>______</b></div><div class="ic">${bi("cook")}Cook time<b>______</b></div><div class="ic">${bi("serv")}Serves<b>______</b></div></div><div class="cdg"><div><h4>Ingredients</h4>${'<div class="ln bx"></div>'.repeat(15)}</div><div><h4>Instructions</h4>${'<div class="ln"></div>'.repeat(15)}</div></div><div class="nb lab">Notes</div></section>`);
+  if(b.thanks)tail.push(`<section class="pg fx ty"><h2 class="t">Thank you</h2><div class="sc">${esc(b.thanksText||"")}</div>${(()=>{const u=[...new Set(photos)].slice(-3);return u.length?`<div class="cl" style="grid-template-columns:repeat(${u.length},1fr)">${u.map(x=>im(x)).join("")}</div>`:""})()}</section>`);
+  return {cls,vars,html:pages.concat(body,tail).join("")};
+}
+
+function renderBook(){
+  const b=state.book,tags=allTags();
+  b.chapters=b.chapters.filter(c=>tags.some(t=>t.name.toLowerCase()===c.toLowerCase()));
+  const withPhotos=state.recipes.filter(r=>r.photo);
+  const opt=(grp,obj,cur)=>Object.entries(obj).map(([k,v])=>`<button class="opt" data-g="${grp}" data-v="${k}" aria-pressed="${cur===k}">${esc(Array.isArray(v)?v[0]:v)}</button>`).join("");
+  main.innerHTML=`<h1>Cookbook</h1><p class="sub">Choose a look, set chapters from your tags, then print or save a file for a print shop.</p>
+  <div class="builder"><div class="panel">
+   <details open><summary>Look</summary><div>
+    <div><div class="hint" style="margin-bottom:6px">Color</div><div class="sw">${Object.entries(PALETTES).map(([k,v])=>`<button data-pal="${k}" title="${v[0]}" aria-label="${v[0]}" aria-pressed="${b.palette===k}" style="background:${v[1]}"></button>`).join("")}</div></div>
+    <div><div class="hint" style="margin-bottom:6px">Cover</div><div class="opts">${opt("cover",COVERS,b.cover)}</div></div>
+    <div><div class="hint" style="margin-bottom:6px">Recipe pages</div><div class="opts">${opt("layout",LAYOUTS,b.layout)}</div></div>
+    <label>Page size<select id="b-size">${Object.entries(SIZES).map(([k,v])=>`<option value="${k}" ${b.size===k?"selected":""}>${v[0]}</option>`).join("")}</select></label>
+   </div></details>
+   <details><summary>Cover</summary><div>
+    <label>Title<input type="text" data-k="title" value="${esc(b.title)}"></label>
+    <label>Subtitle<input type="text" data-k="subtitle" value="${esc(b.subtitle)}"></label>
+    <label>Author <span class="hint">Prints in script</span><input type="text" data-k="author" value="${esc(b.author)}" placeholder="by your name"></label>
+    <label>Cover photo<select id="b-cphoto"><option value="">First recipe photo</option>${withPhotos.map(r=>`<option value="${r.id}" ${b.coverPhoto===r.id?"selected":""}>${esc(r.title)}</option>`).join("")}<option value="upload" ${b.coverPhoto==="upload"?"selected":""}>My own photo</option></select></label>
+    <input type="file" id="b-cup" accept="image/*" ${b.coverPhoto==="upload"?"":"hidden"} aria-label="Upload cover photo">
+   </div></details>
+   <details open><summary>Chapters: pick which tags break down the book</summary><div>
+    <p class="hint" style="margin:0">Tap a tag below to make it a chapter, and use the arrows to set the order. A recipe goes in the first chapter it matches. Tap a chapter’s photo to change its title-page picture.</p>
+    ${tags.length?`<div style="display:grid;gap:6px">${b.chapters.map((c,i)=>{const cr=state.recipes.filter(r=>hasTag(r,c)),src=divSrc(c,cr),k=chKey(c),cur=(b.divPhotos||{})[k]||"";return `<div class="chap"><button class="dthumb" data-dph="${i}" aria-label="Change photo for ${esc(c)}">${src?`<img src="${src}" alt="">`:"Photo"}</button><span>${pad(i+1)} ${esc(c)}</span><button data-up="${i}" aria-label="Move up">▲</button><button data-dn="${i}" aria-label="Move down">▼</button><button data-rm="${i}" aria-label="Remove chapter">✕</button></div>${state.divOpen===i?`<div class="dpick"><button data-dset="" data-ck="${k}" aria-pressed="${!cur}">Auto</button>${cr.filter(r=>r.photo).map(r=>`<button data-dset="${r.id}" data-ck="${k}" aria-pressed="${cur===r.id}" title="${esc(r.title)}"><img src="${r.photo}" alt="${esc(r.title)}"></button>`).join("")}<label class="btn sm" style="display:inline-flex;align-items:center;cursor:pointer">Upload<input type="file" accept="image/*" data-dup="${k}" hidden></label></div>`:""}`}).join("")}</div>
+    <div class="chips" style="margin:0">${tags.filter(t=>!b.chapters.some(c=>c.toLowerCase()===t.name.toLowerCase())).map(t=>`<button class="chip" data-addch="${esc(t.name)}">+ ${esc(t.name)}</button>`).join("")}</div>`:`<p class="hint" style="margin:0">Add tags to your recipes first.</p>`}
+    <label class="toggle"><input type="checkbox" data-b="untagged" ${b.untagged?"checked":""}> Put other recipes in “More recipes”</label>
+    <label class="toggle"><input type="checkbox" data-b="dividers" ${b.dividers?"checked":""}> Chapter title pages</label>
+   </div></details>
+   <details><summary>Extra pages</summary><div>
+    <label class="toggle"><input type="checkbox" data-b="toc" ${b.toc?"checked":""}> Table of contents</label>
+    <label class="toggle"><input type="checkbox" data-b="welcome" ${b.welcome?"checked":""}> Welcome or about me</label>
+    <div ${b.welcome?"":"hidden"} style="display:grid;gap:10px"><label>Heading<input type="text" data-k="welcomeTitle" value="${esc(b.welcomeTitle)}"></label><label>Text<textarea data-k="welcomeText" style="min-height:90px">${esc(b.welcomeText)}</textarea></label><label>Photo <span class="hint">Optional</span><input type="file" id="b-wup" accept="image/*"></label></div>
+    <label class="toggle"><input type="checkbox" data-b="quote" ${b.quote?"checked":""}> Quote page</label>
+    <div ${b.quote?"":"hidden"} style="display:grid;gap:10px"><label>Quote<textarea data-k="quoteText" style="min-height:60px">${esc(b.quoteText)}</textarea></label><label>Said by<input type="text" data-k="quoteBy" value="${esc(b.quoteBy)}"></label></div>
+    <label class="toggle"><input type="checkbox" data-b="planner" ${b.planner?"checked":""}> Weekly meal planner</label>
+    <label class="toggle"><input type="checkbox" data-b="card" ${b.card?"checked":""}> Blank recipe card</label>
+    <label class="toggle"><input type="checkbox" data-b="thanks" ${b.thanks?"checked":""}> Thank you page</label>
+    <div ${b.thanks?"":"hidden"}><label>Message<input type="text" data-k="thanksText" value="${esc(b.thanksText)}"></label></div>
+   </div></details>
+   <details><summary>Photo check</summary><div id="pcheck"><p class="hint" style="margin:0">Checking photos…</p></div></details>
+   <details><summary>Recipes in the book (${b.selected.length})</summary><div>
+    <div class="bar" style="margin:0"><select id="b-tagsel" style="flex:1;min-width:140px"><option value="">Pick by tag…</option>${tags.map(t=>`<option value="${esc(t.name)}">${esc(t.name)} (${t.count})</option>`).join("")}</select><button class="btn sm" id="b-tagonly">Only these</button><button class="btn sm" id="b-tagadd">Add these</button></div>
+    <label class="toggle"><input type="checkbox" data-b="withLinked" ${b.withLinked?"checked":""}> Add linked recipes automatically</label>
+    ${state.recipes.length?`<div class="bar" style="margin:0"><button class="btn sm" id="all">Select all</button><button class="btn sm" id="none">Clear</button></div><div class="picks">${state.recipes.map(r=>`<label><input type="checkbox" data-id="${r.id}" ${b.selected.includes(r.id)?"checked":""}> ${esc(r.title)}<small>${esc(r.tags.join(", "))}</small></label>`).join("")}</div>`:`<p class="hint" style="margin:0">Add recipes first.</p>`}
+   </div></details>
+   <div class="bar" style="margin:4px 0 0"><button class="btn primary" id="print">Print</button><button class="btn" id="dl" ${store.downloads?"":"hidden"}>Download print file</button></div>
+   <p class="hint" style="margin:0">Choose “Save as PDF” in the print window to make a PDF. If printing doesn’t open here, use Download print file.</p>
+  </div><div class="preview-wrap"><p class="pnote" id="pnote"></p><div id="preview"></div></div></div>`;
+  drawPreview();
+  const upd=(k,v,re)=>{state.book[k]=v;putBook();re?renderBook():drawPreview()};
+  main.querySelectorAll("[data-pal]").forEach(x=>x.onclick=()=>upd("palette",x.dataset.pal,true));
+  main.querySelectorAll(".opt").forEach(x=>x.onclick=()=>upd(x.dataset.g,x.dataset.v,true));
+  $("#b-size").onchange=e=>upd("size",e.target.value);
+  main.querySelectorAll("[data-k]").forEach(x=>x.addEventListener("input",()=>upd(x.dataset.k,x.value)));
+  main.querySelectorAll("[data-b]").forEach(x=>x.onchange=()=>upd(x.dataset.b,x.checked,["welcome","quote","thanks"].includes(x.dataset.b)));
+  $("#b-cphoto").onchange=e=>upd("coverPhoto",e.target.value,true);
+  const up=(id,k)=>{const el=$(id);if(el)el.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{state.imgs[k]=await shrinkImage(f,1400,220000);await putImg(k);drawPreview();toast("Photo added")}catch{toast("That file isn’t an image this browser can read.")}}};
+  up("#b-cup","cover");up("#b-wup","welcome");
+  main.querySelectorAll("[data-dph]").forEach(x=>x.onclick=()=>{state.divOpen=state.divOpen===+x.dataset.dph?null:+x.dataset.dph;renderBook()});
+  main.querySelectorAll("[data-dset]").forEach(x=>x.onclick=()=>{const dp={...(b.divPhotos||{})};if(x.dataset.dset)dp[x.dataset.ck]=x.dataset.dset;else delete dp[x.dataset.ck];upd("divPhotos",dp,true)});
+  main.querySelectorAll("[data-dup]").forEach(x=>x.onchange=async e=>{const f=e.target.files[0];if(!f)return;const k=x.dataset.dup;try{state.imgs["div_"+k]=await shrinkImage(f,1400,200000);await putImg("div_"+k);upd("divPhotos",{...(b.divPhotos||{}),[k]:"upload"},true);toast("Chapter photo added")}catch{toast("That file isn’t an image this browser can read.")}});
+  const pickTag=only=>{const t=$("#b-tagsel").value;if(!t)return toast("Pick a tag first.");const ids=state.recipes.filter(r=>hasTag(r,t)).map(r=>r.id);upd("selected",only?ids:[...new Set([...b.selected,...ids])],true);toast(`${ids.length} ${t} recipe${ids.length===1?"":"s"} ${only?"selected":"added"}`)};
+  $("#b-tagonly").onclick=()=>pickTag(true);$("#b-tagadd").onclick=()=>pickTag(false);
+  (async()=>{const pc=$("#pcheck");if(!pc)return;const rs=state.recipes.filter(r=>b.selected.includes(r.id));const res=[];for(const r of rs){const w=await photoW(r.photo);if(!r.photo||w<800)res.push({r,w})}
+    if(!$("#pcheck"))return;$("#pcheck").innerHTML=res.length?`<p class="hint" style="margin:0">${res.length} recipe${res.length>1?"s":""} in the book ${res.length>1?"have":"has"} no photo or a small one that may print blurry. Photos 800 pixels wide or more print well.</p>${res.map(o=>`<div class="pq">${o.r.photo?`<img src="${o.r.photo}" alt="">`:""}<span>${esc(o.r.title)} <small class="hint">${o.w?o.w+" px":"no photo"}</small></span><button class="btn sm" data-fix="${o.r.id}">Replace</button></div>`).join("")}`:`<p class="hint" style="margin:0">All photos are large enough to print well.</p>`;
+    $("#pcheck").querySelectorAll("[data-fix]").forEach(x=>x.onclick=()=>setView("edit",x.dataset.fix));
+    if(rs.some(r=>r.photo))drawPreview()})();
+  main.querySelectorAll("[data-addch]").forEach(x=>x.onclick=()=>upd("chapters",[...b.chapters,x.dataset.addch],true));
+  const mv=(i,d)=>{const a=[...b.chapters];const j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];upd("chapters",a,true)};
+  main.querySelectorAll("[data-up]").forEach(x=>x.onclick=()=>mv(+x.dataset.up,-1));
+  main.querySelectorAll("[data-dn]").forEach(x=>x.onclick=()=>mv(+x.dataset.dn,1));
+  main.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>upd("chapters",b.chapters.filter((_,i)=>i!==+x.dataset.rm),true));
+  main.querySelectorAll(".picks input").forEach(c=>c.onchange=()=>{const s=new Set(state.book.selected);c.checked?s.add(c.dataset.id):s.delete(c.dataset.id);upd("selected",[...s]);main.querySelector(".panel details:last-of-type > summary").textContent=`Recipes in the book (${s.size})`});
+  const all=$("#all");if(all){all.onclick=()=>upd("selected",state.recipes.map(r=>r.id),true);$("#none").onclick=()=>upd("selected",[],true)}
+  $("#print").onclick=()=>{if(!state.book.selected.length)return toast("Choose at least one recipe for the book.");doPrint(bookHTML())};
+  $("#dl").onclick=downloadBook;
+}
+function drawPreview(){
+  const p=$("#preview");if(!p)return;const bk=bookHTML();
+  p.className=bk.cls;p.setAttribute("style",bk.vars);p.innerHTML=bk.html;
+  const n=p.querySelectorAll(".pg").length,c=state.book.selected.length;
+  $("#pnote").textContent=c?`Preview. ${n} pages, ${c} recipe${c>1?"s":""}.`:"Preview. Add recipes to the book to see their pages.";
+  const s=SIZES[state.book.size];p.style.zoom=Math.max(.28,Math.min(1,(p.parentElement.clientWidth-40)/(s[1]*96)));
+}
+window.addEventListener("resize",()=>{if(state.view==="book")drawPreview()});
+const pageCSS=()=>{const s=SIZES[state.book.size];return `@page{size:${s[1]}in ${s[2]}in;margin:0}`};
+function doPrint(bk){
+  const root=$("#printRoot");root.className=bk.cls;root.setAttribute("style",bk.vars);root.innerHTML=bk.html;
+  let st=$("#printStyle");if(!st){st=document.createElement("style");st.id="printStyle";document.head.appendChild(st)}
+  st.textContent=`@media print{${pageCSS()} body{background:#fff} .app,.toast{display:none!important} #printRoot{display:block!important} :root{padding:0!important} body::before{display:none} *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}`;
+  try{window.print()}catch(e){toast("Printing is blocked here. Use Download print file.")}
+}
+async function downloadBook(){
+  if(!state.book.selected.length)return toast("Choose at least one recipe for the book.");
+  if(!store.downloads)return toast("Downloads aren’t available in this view.");
+  const bk=bookHTML();
+  const html=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>${esc(state.book.title)}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Allura&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet"><style>${$("#bookcss").textContent}
+body{margin:0;background:#ddd}*{box-sizing:border-box}.wrap{display:flex;flex-direction:column;align-items:center;gap:20px;padding:20px}.note{font:15px system-ui;background:#fff;padding:14px 18px;max-width:640px;margin:20px auto 0;border-radius:8px}
+@media print{${pageCSS()} body{background:#fff}.note{display:none}.wrap{display:block;padding:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head>
+<body><p class="note">Press Ctrl+P (Cmd+P on Mac). Set margins to None, turn on Background graphics, and choose Save as PDF or your printer. Upload the PDF to a print service like Blurb or Lulu.</p><div class="wrap ${bk.cls}" style="${bk.vars}">${bk.html}</div></body></html>`;
+  try{await store.downloads.save({filename:(state.book.title||"cookbook").replace(/[^\w\- ]+/g,"").trim()+".html",data:html});toast("Print file saved")}catch(e){if(e.code!=="declined")toast("The file couldn’t be saved. Try Print instead.")}
+}
+loadLocal();
+Object.keys(DEF_BOOK).forEach(k=>{if(state.book[k]===undefined)state.book[k]=DEF_BOOK[k]});
+if(!PALETTES[state.book.palette])state.book.palette="linen";
+if(!COVERS[state.book.cover])state.book.cover="a";
+if(!LAYOUTS[state.book.layout])state.book.layout="mix";
+drawPins();setView("home");initCloud();
+})();
+</script>
+</body>
+</html>

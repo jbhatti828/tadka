@@ -1,0 +1,7 @@
+# Never commit personal data or build output
+*backup*.json
+*.backup.json
+node_modules/
+mac/dist/
+.DS_Store
+.env
